@@ -1,10 +1,10 @@
 {
- "time": 1795351825,
+ "time": 1795351949,
  "members": [
   {
    "id": "vonsek2",
    "terminal": "kör",
-   "last_session": 1795351271,
+   "last_session": 1795351925,
    "branch": "vonsek2/fuzz40-tbuffer-missing-channel",
    "dirty": 2,
    "last_edit": 1795351075,
@@ -21,7 +21,7 @@
   {
    "id": "vonsek3",
    "terminal": "kör",
-   "last_session": 1795351275,
+   "last_session": 1795351859,
    "branch": "",
    "dirty": 0,
    "last_edit": 0,
