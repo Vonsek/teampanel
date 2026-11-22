@@ -1,5 +1,5 @@
 {
- "time": 1795354935,
+ "time": 1795355057,
  "members": [
   {
    "id": "vonsek2",
@@ -21,10 +21,10 @@
   {
    "id": "vonsek3",
    "terminal": "kör",
-   "last_session": 1795354917,
+   "last_session": 1795355012,
    "branch": "vonsek3/shader-library-corpus",
-   "dirty": 0,
-   "last_edit": 0,
+   "dirty": 3,
+   "last_edit": 1795354996,
    "commit": "hw_oracle test follows #1620's per-kernel MODE skip; three tools guard stdout",
    "commit_time": 1795354503,
    "task": {
