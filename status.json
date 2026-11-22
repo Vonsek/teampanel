@@ -1,5 +1,5 @@
 {
- "time": 1795356773,
+ "time": 1795356899,
  "members": [
   {
    "id": "vonsek2",
@@ -21,7 +21,7 @@
   {
    "id": "vonsek3",
    "terminal": "kör",
-   "last_session": 1795356748,
+   "last_session": 1795356881,
    "branch": "",
    "dirty": 0,
    "last_edit": 0,
@@ -38,10 +38,10 @@
   {
    "id": "vonsek4",
    "terminal": "kör",
-   "last_session": 1795356775,
+   "last_session": 1795356841,
    "branch": "vonsek4/merge-incomplete-shards",
-   "dirty": 1,
-   "last_edit": 0,
+   "dirty": 2,
+   "last_edit": 1795356847,
    "commit": "hw_oracle test follows #1620's per-kernel MODE skip; three tools guard stdout",
    "commit_time": 1795354503,
    "task": {
