@@ -1,10 +1,10 @@
 {
- "time": 1795355670,
+ "time": 1795355792,
  "members": [
   {
    "id": "vonsek2",
    "terminal": "kör",
-   "last_session": 1795354106,
+   "last_session": 1795355787,
    "branch": "vonsek2/fuzz40-tbuffer-missing-channel",
    "dirty": 2,
    "last_edit": 1795351075,
@@ -21,12 +21,12 @@
   {
    "id": "vonsek3",
    "terminal": "kör",
-   "last_session": 1795355637,
+   "last_session": 1795355698,
    "branch": "vonsek3/shader-library-corpus",
-   "dirty": 3,
-   "last_edit": 1795354996,
-   "commit": "hw_oracle test follows #1620's per-kernel MODE skip; three tools guard stdout",
-   "commit_time": 1795354503,
+   "dirty": 0,
+   "last_edit": 0,
+   "commit": "Runtime: test the shader lookup against a translated corpus",
+   "commit_time": 1795355696,
    "task": {
     "id": "EGEN-SHADERLIB-CORPUS",
     "text": "Paketstyrt ctest: runtimens ShaderLibrary (XBCH-inflate, SHA-256, index.json) hittar varje riktig DXBC-container i <work>/shaders (LEONIDA_SHADERS)",
