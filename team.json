@@ -4,7 +4,10 @@
   "quiet_minutes": 60,
   "stopped_minutes": 180,
   "members": [
-    {"name": "Lucas", "prefixes": ["codex/", "ag/", "claude/"], "default": true}
+    {"name": "Vonsek", "prefixes": ["codex/", "ag/", "claude/"], "default": true},
+    {"name": "Vonsek2"},
+    {"name": "Vonsek3"},
+    {"name": "Vonsek4"}
   ],
   "ignore": ["claude", "github-actions", "dependabot", "copilot"],
   "projects": [
