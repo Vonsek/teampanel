@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="sv">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Teampanel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#070a11; --panel:rgba(16,22,34,.78); --panel2:rgba(22,30,46,.9); --line:#1d2840; --line2:#2a3858;
+  --ink:#e9eef7; --ink2:#a3afc4; --ink3:#8592aa; --chrome:#3fd8ff;
+  --good:#3fb950; --warn:#e3b341; --bad:#f85149;
+  --display:'Orbitron',system-ui,sans-serif; --body:'IBM Plex Sans',system-ui,'Segoe UI',sans-serif; --mono:'JetBrains Mono',Consolas,monospace;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.45 var(--body)}
+body{min-height:100vh;background:
+  radial-gradient(1200px 600px at 10% -10%,rgba(63,216,255,.10),transparent 60%),
+  radial-gradient(900px 500px at 100% 0%,rgba(124,92,255,.12),transparent 60%),
+  linear-gradient(rgba(63,216,255,.035) 1px,transparent 1px) 0 0/40px 40px,
+  linear-gradient(90deg,rgba(63,216,255,.035) 1px,transparent 1px) 0 0/40px 40px,var(--bg)}
+.wrap{max-width:1680px;margin:0 auto;padding:18px 24px 32px}
+header{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:18px}
+.brand{display:flex;align-items:center;gap:14px}
+.glyph{width:42px;height:42px;border-radius:10px;display:grid;place-items:center;background:linear-gradient(135deg,rgba(63,216,255,.25),rgba(124,92,255,.25));border:1px solid var(--line2)}
+.brand h1{font:700 20px/1 var(--display);letter-spacing:.14em;margin:0}
+.brand .tag{font:500 11px/1 var(--display);letter-spacing:.32em;color:var(--chrome);margin-top:6px}
+.hud{display:flex;align-items:center;gap:18px;font-family:var(--mono);font-size:12px;color:var(--ink2)}
+.live{display:flex;align-items:center;gap:8px;color:var(--ink);font:600 12px var(--display);letter-spacing:.2em}
+.live i{width:9px;height:9px;border-radius:50%;background:var(--good);animation:ping 1.6s infinite}
+@keyframes ping{0%{box-shadow:0 0 0 0 rgba(63,185,80,.7)}70%{box-shadow:0 0 0 10px rgba(63,185,80,0)}100%{box-shadow:0 0 0 0 rgba(63,185,80,0)}}
+#clock{font:600 18px var(--mono);color:var(--ink)}
+.err{color:var(--bad)}
+.ptabs{display:flex;gap:4px;background:rgba(0,0,0,.3);border:1px solid var(--line);border-radius:10px;padding:4px}
+.ptabs button,.seg button{all:unset;cursor:pointer;font:600 11px var(--display);letter-spacing:.14em;color:var(--ink2);padding:7px 14px;border-radius:7px;text-transform:uppercase}
+.ptabs button.on,.seg button.on{background:var(--panel2);color:var(--ink);box-shadow:inset 0 0 0 1px var(--chrome)}
+.seg{display:flex;gap:4px;background:rgba(0,0,0,.25);border:1px solid var(--line);border-radius:8px;padding:3px}
+.seg button{padding:4px 10px;font-family:var(--mono);letter-spacing:0;text-transform:none}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px;position:relative;box-shadow:0 10px 40px rgba(0,0,0,.35)}
+.panel::before{content:"";position:absolute;left:14px;right:14px;top:-1px;height:1px;background:linear-gradient(90deg,transparent,rgba(63,216,255,.55),transparent)}
+.ptitle{font:600 11px/1 var(--display);letter-spacing:.24em;color:var(--ink2);text-transform:uppercase;margin:0 0 14px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.ptitle small{font:400 11px var(--body);letter-spacing:0;text-transform:none;color:var(--ink3)}
+.row{display:grid;gap:18px;margin-bottom:18px}
+.r1{grid-template-columns:minmax(0,1.15fr) minmax(0,1fr)}
+.r3{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+.r4{grid-template-columns:minmax(0,1.5fr) minmax(0,1fr)}
+.mission{display:grid;grid-template-columns:210px 1fr;gap:22px;align-items:center}
+.ring{position:relative;width:210px;height:210px}
+.ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.ring .center{position:absolute;inset:0;display:grid;place-items:center;text-align:center}
+.pct{font:900 54px/1 var(--display);color:#f2fbff}
+.pct-l{font:500 11px var(--display);letter-spacing:.28em;color:var(--ink2);margin-top:6px}
+.steps{display:grid;grid-template-columns:1fr 1fr;gap:6px 14px}
+.step{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--ink2);min-width:0}
+.step span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.step b{flex:none;width:18px;height:18px;border-radius:50%;display:grid;place-items:center;font-size:11px;border:1px solid var(--line2);color:var(--ink3)}
+.step.done,.step.partial{color:var(--ink)}
+.step.done b{background:rgba(63,216,255,.15);border-color:var(--chrome);color:var(--chrome)}
+.step.partial b{border-color:var(--warn);color:var(--warn)}
+.step.big{grid-column:1/-1}.step.big b{border-style:dashed}
+.step .w{margin-left:auto;font:400 11px var(--mono);color:var(--ink3);flex:none}
+.note{font-size:12px;color:var(--ink3);margin-top:12px;line-height:1.5}
+.kpis{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.kpi{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:16px 18px;min-height:112px;display:flex;flex-direction:column;justify-content:space-between}
+.kpi .k{font:600 11px var(--display);letter-spacing:.22em;color:var(--ink2);text-transform:uppercase}
+.kpi .v{font:700 42px/1.05 var(--display);margin:8px 0 4px}
+.kpi .s{font-size:12px;color:var(--ink3)}
+.members{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:18px;margin-bottom:18px}
+.member{border-top:2px solid var(--c)}
+.member .head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.member h2{margin:0;font:700 21px var(--display);letter-spacing:.08em;display:flex;align-items:center;gap:10px}
+.member h2 .sw{width:12px;height:12px;border-radius:3px;background:var(--c)}
+.chip{font:600 11px var(--display);letter-spacing:.18em;padding:5px 10px;border-radius:20px;border:1px solid var(--line2);color:var(--ink2);display:flex;align-items:center;gap:7px}
+.chip i{width:7px;height:7px;border-radius:50%}
+.chip.ok{color:var(--ink);border-color:rgba(63,185,80,.6)}.chip.ok i{background:var(--good);animation:blink 1.1s infinite}
+.chip.quiet{color:#f0cd75;border-color:rgba(227,179,65,.7)}.chip.quiet i{background:var(--warn)}
+.chip.stopped{color:#ff8a84;border-color:rgba(248,81,73,.8);background:rgba(248,81,73,.08)}.chip.stopped i{background:var(--bad)}
+@keyframes blink{50%{opacity:.25}}
+.sub{color:var(--ink3);font-size:12px}
+.mono{font-family:var(--mono)}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:12px 0}
+.stat{background:rgba(0,0,0,.22);border:1px solid var(--line);border-radius:10px;padding:8px 10px}
+.stat .n{font:700 22px var(--display)}
+.stat .l{font-size:11px;color:var(--ink3)}
+.spark{height:42px;margin:4px 0 8px;display:block}
+.pr{padding:7px 0;border-top:1px solid var(--line);font-size:13px}
+.pr a{color:var(--ink);text-decoration:none}.pr a:hover{color:var(--chrome)}
+.badge{font:600 11px var(--body);padding:1px 7px;border-radius:10px;border:1px solid var(--line2);color:var(--ink2);margin-right:6px}
+.badge.MERGED{border-color:rgba(144,133,233,.7);color:#c3bbff}.badge.OPEN{border-color:rgba(63,185,80,.6);color:#7ee28b}.badge.CLOSED{border-color:rgba(248,81,73,.6);color:#ff8a84}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--ink2);margin:-4px 0 8px}
+.legend span{display:inline-flex;align-items:center;gap:6px}.legend i{width:10px;height:10px;border-radius:3px}
+.axis{fill:var(--ink3);font-size:11px;font-family:var(--body)}
+.rankhero{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:12px}
+.rankhero .big{font:900 44px/1 var(--display)}.rankhero .big small{font-size:18px;color:var(--ink3)}
+.rankhero .txt{font-size:13px;color:var(--ink2);max-width:440px}
+.lb{display:grid;gap:5px}
+.lbr{display:grid;grid-template-columns:28px 150px 1fr 48px;gap:10px;align-items:center;font-size:13px;padding:3px 6px;border-radius:6px}
+.lbr .rk{font:600 12px var(--mono);color:var(--ink3);text-align:right}
+.lbr .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lbr .bar{height:10px;border-radius:4px;background:#111a2b;overflow:hidden}.lbr .bar i{display:block;height:100%;border-radius:4px;background:#5b6880}
+.lbr .v{font:600 12px var(--mono);text-align:right}
+.lbr.me{background:rgba(63,216,255,.08);box-shadow:inset 0 0 0 1px rgba(63,216,255,.45)}.lbr.me .bar i{background:var(--chrome)}
+.lbr.owner .nm::after{content:" ägare";font-size:11px;color:var(--ink3)}
+.feed{max-height:640px;overflow:auto}
+.ev{display:grid;grid-template-columns:8px 1fr;gap:10px;padding:8px 0;border-bottom:1px solid var(--line)}
+.ev .dot{width:8px;height:8px;border-radius:50%;margin-top:6px}
+.ev .top{display:flex;justify-content:space-between;gap:8px;font:11px var(--mono);color:var(--ink3)}
+.ev .txt{font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ev a{color:inherit;text-decoration:none}
+.kind{font:600 11px var(--display);letter-spacing:.12em;color:var(--ink2)}
+#tip{position:fixed;pointer-events:none;z-index:9;background:rgba(10,14,22,.96);border:1px solid var(--line2);border-radius:8px;padding:8px 10px;font-size:12px;display:none}
+@media (max-width:1200px){.r1,.r3,.r4{grid-template-columns:1fr}}
+@media (max-width:640px){
+  .wrap{padding:12px 16px 24px}.brand h1{font-size:16px}.hud{width:100%;justify-content:space-between}#upd{display:none}
+  .panel{padding:14px}.mission{grid-template-columns:1fr;justify-items:center}.ring{width:180px;height:180px}.pct{font-size:44px}
+  .steps{grid-template-columns:1fr;width:100%}.kpi .v{font-size:30px}.kpi{min-height:92px;padding:12px}
+  .members{grid-template-columns:1fr}.stats{grid-template-columns:1fr 1fr}.lbr{grid-template-columns:24px 104px 1fr 40px;gap:8px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="brand">
+      <div class="glyph"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#9feaff" stroke-width="1.8"><circle cx="8" cy="9" r="3"/><circle cx="16" cy="9" r="3"/><path d="M3 19c1-3 3-4 5-4s4 1 5 4M11 19c1-3 3-4 5-4s4 1 5 4"/></svg></div>
+      <div><h1 id="title">TEAM</h1><div class="tag" id="ptag">TEAMPANEL</div></div>
+    </div>
+    <nav class="ptabs" id="ptabs"></nav>
+    <div class="hud"><span class="err" id="err"></span><span id="upd">laddar…</span><span class="live"><i></i>LIVE</span><span id="clock">--:--:--</span></div>
+  </header>
+
+  <section class="row r1">
+    <div class="panel">
+      <div class="ptitle">Väg till målet <small id="msub"></small></div>
+      <div class="mission">
+        <div class="ring"><svg viewBox="0 0 230 230">
+          <defs><linearGradient id="rg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3fd8ff"/><stop offset="1" stop-color="#7c5cff"/></linearGradient></defs>
+          <circle cx="115" cy="115" r="96" fill="none" stroke="#18223a" stroke-width="14"/>
+          <circle id="arc" cx="115" cy="115" r="96" fill="none" stroke="url(#rg)" stroke-width="14" stroke-linecap="round" stroke-dasharray="0 999" style="transition:stroke-dasharray 1.2s"/>
+        </svg><div class="center"><div><div class="pct" id="pct">–</div><div class="pct-l">KLART</div></div></div></div>
+        <div class="steps" id="steps"></div>
+      </div>
+      <div class="note" id="goal"></div>
+    </div>
+    <div class="kpis" id="kpis"></div>
+  </section>
+
+  <section class="members" id="members"></section>
+
+  <section class="row r3">
+    <div class="panel">
+      <div class="ptitle">PR:er per dag <small>öppnade, per medlem, senaste 14 dagarna</small></div>
+      <div class="legend" id="leg"></div>
+      <div id="chart"></div>
+    </div>
+    <div class="panel">
+      <div class="ptitle">Topplista <div class="seg" id="lbmode"><button data-m="commits" class="on">Commits i main</button><button data-m="prs">Mergade PR</button></div></div>
+      <div class="rankhero" id="rankhero"></div>
+      <div class="lb" id="lb"></div>
+      <div class="note" id="lbnote"></div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="ptitle">Liveflöde <small>pushar och PR:er, senaste 7 dagarna</small></div>
+    <div class="feed" id="feed"></div>
+  </section>
+</div>
+<div id="tip"></div>
+<script>
+const PAL=["#3987e5","#d95926","#199e70","#c98500","#d55181","#0ca30c","#9085e9","#e66767"];
+const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+let D=null,P=null,lbMode="commits",live={};
+let PID=(()=>{const u=new URLSearchParams(location.search).get("p");if(u)return u;try{return localStorage.getItem("teampanel.p")||""}catch(e){return""}})();
+const now=()=>Math.floor(Date.now()/1000);
+function ago(t){if(!t)return"aldrig";const s=Math.max(0,now()-t);if(s<60)return"nyss";if(s<3600)return Math.floor(s/60)+" min";if(s<86400)return Math.floor(s/3600)+" h";return Math.floor(s/86400)+" d"}
+const tip=document.getElementById("tip");
+function showTip(e,h){tip.innerHTML=h;tip.style.display="block";let x=e.clientX+14,y=e.clientY+14;if(x+tip.offsetWidth>innerWidth-8)x=e.clientX-tip.offsetWidth-14;tip.style.left=x+"px";tip.style.top=y+"px"}
+function hideTip(){tip.style.display="none"}
+const col=name=>PAL[Math.max(0,D.members.findIndex(m=>m.name===name))%PAL.length];
+function memberFor(ref){const r=(ref||"").toLowerCase();for(const m of D.members)for(const p of m.prefixes)if(r.startsWith(p.toLowerCase()))return m.name;
+  return (D.members.find(m=>m.default)||D.members[0]).name}
+function pushes(){const own=(P.pushes||[]).slice();for(const e of (live[P.id]||[]))if(!own.some(o=>o.time===e.time&&o.branch===e.branch))own.push(e);return own.sort((a,b)=>b.time-a.time)}
+
+function renderTabs(){
+  document.getElementById("title").textContent=D.title.toUpperCase();
+  document.getElementById("ptag").textContent=P.name.toUpperCase()+" · TEAMPANEL";document.title=D.title+" · "+P.name;
+  const t=document.getElementById("ptabs");
+  t.innerHTML=D.projects.map(p=>`<button data-p="${esc(p.id)}" class="${p.id===P.id?"on":""}">${esc(p.name)}</button>`).join("");
+  t.querySelectorAll("button").forEach(b=>b.onclick=()=>{PID=b.dataset.p;try{localStorage.setItem("teampanel.p",PID)}catch(e){};pick();render()});
+}
+function renderMission(){const m=P.milestones,C=2*Math.PI*96;
+  document.getElementById("arc").setAttribute("stroke-dasharray",`${C*m.percent/100} ${C}`);
+  document.getElementById("pct").textContent=m.percent+"%";document.getElementById("msub").textContent=`${m.done} av ${m.total} klara`;
+  document.getElementById("goal").textContent=m.goal;
+  document.getElementById("steps").innerHTML=m.items.map(i=>`<div class="step ${i.state} ${i.weight>1?"big":""}"><b>${i.state==="done"?"✓":i.state==="partial"?"◐":""}</b><span title="${esc(i.name)}">${esc(i.name)}</span>${i.weight>1?`<span class="w">${i.weight} p</span>`:""}</div>`).join("")}
+function renderKpis(){const t=P.team,L=P.leader.commits;
+  document.getElementById("kpis").innerHTML=[
+   ["PR:er öppnade",t.opened,`${t.open} öppna just nu`],["Mergade",t.merged,`in i ${esc(P.repo)}`],
+   ["Commits i main",t.commits,`kontot ${esc(D.account)}`],["Plats i topplistan",L.best_rank_ex_owner?"#"+L.best_rank_ex_owner:"–",`av ${L.total}, ägaren ej räknad`]]
+   .map(([k,v,s])=>`<div class="kpi"><div class="k">${k}</div><div class="v">${v}</div><div class="s">${s}</div></div>`).join("")}
+function status(last){const m=(now()-last)/60;if(!last||m>=D.stopped_minutes)return["stopped","STANNAT"];if(m>=D.quiet_minutes)return["quiet","TYST"];return["ok","AKTIV"]}
+function spark(days,c){const w=300,h=42,v=days.map(d=>d.opened+d.merged),max=Math.max(1,...v),n=v.length;
+  const pts=v.map((x,i)=>`${(i*w/(n-1)).toFixed(1)},${(h-4-(x/max)*(h-10)).toFixed(1)}`).join(" L");
+  return `<svg class="spark" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" width="100%"><path d="M${pts}" fill="none" stroke="${c}" stroke-width="2" vector-effect="non-scaling-stroke"/></svg>`}
+function renderMembers(){const ev=pushes();
+  document.getElementById("members").innerHTML=P.people.map(p=>{
+    const mine=ev.filter(e=>memberFor(e.branch)===p.name),lp=Math.max(p.last_push,...mine.map(e=>e.time),0),br=(mine[0]||{}).branch||p.last_branch;
+    const last=Math.max(lp,p.last_pr),[cls,lbl]=status(last),c=col(p.name);
+    let h=`<div class="panel member" style="--c:${c}"><div class="head"><h2><span class="sw"></span>${esc(p.name)}</h2><span class="chip ${cls}"><i></i>${lbl}</span></div>
+      <div class="sub">senaste push för ${ago(lp)} sedan${br?` på <span class="mono">${esc(br)}</span>`:""} · senaste PR-händelse för ${ago(p.last_pr)} sedan</div>
+      <div class="stats"><div class="stat"><div class="n">${p.opened}</div><div class="l">PR öppnade</div></div><div class="stat"><div class="n">${p.merged}</div><div class="l">mergade</div></div>
+      <div class="stat"><div class="n">${p.open}</div><div class="l">öppna nu</div></div><div class="stat"><div class="n">${mine.filter(e=>now()-e.time<86400).length}</div><div class="l">pushar 24 h</div></div></div>
+      <div class="sub">PR-aktivitet per dag, 14 dagar</div>${spark(p.days,c)}`;
+    if(!p.recent.length)h+=`<div class="sub">Inga PR:er ännu. Grenar ska börja med <span class="mono">${esc(D.members.find(m=>m.name===p.name).prefixes[0])}</span></div>`;
+    for(const r of p.recent)h+=`<div class="pr"><span class="badge ${r.state}">${{OPEN:"öppen",DRAFT:"utkast",MERGED:"mergad",CLOSED:"stängd"}[r.state]}</span><a href="${esc(r.url)}" target="_blank" rel="noopener">#${r.number} ${esc(r.title)}</a> <span class="sub">${ago(r.updated)}</span></div>`;
+    return h+`</div>`}).join("")}
+function renderChart(){const el=document.getElementById("chart"),W=el.clientWidth||500,H=200,pl=28,pr=8,pt=8,pb=24,ppl=P.people,n=ppl[0]?ppl[0].days.length:14;
+  document.getElementById("leg").innerHTML=ppl.map(p=>`<span><i style="background:${col(p.name)}"></i>${esc(p.name)}</span>`).join("");
+  const tot=i=>ppl.reduce((s,p)=>s+p.days[i].opened,0),raw=Math.max(2,...Array.from({length:n},(_,i)=>tot(i))),ts=Math.ceil(raw/4),tk=Math.ceil(raw/ts),max=ts*tk;
+  const gw=(W-pl-pr)/n,bw=Math.max(4,Math.min(22,gw-6)),y=v=>pt+(H-pt-pb)*(1-v/max);
+  let s=`<svg width="${W}" height="${H}">`;
+  for(let k=0;k<=tk;k++){const yy=y(k*ts);s+=`<line x1="${pl}" x2="${W-pr}" y1="${yy}" y2="${yy}" stroke="#1d2840" ${k?'stroke-dasharray="2 4"':""}/><text class="axis" x="${pl-6}" y="${yy+4}" text-anchor="end">${k*ts}</text>`}
+  for(let i=0;i<n;i++){let acc=0;const x0=pl+gw*i+(gw-bw)/2,day=new Date(ppl[0].days[i].start*1000).toLocaleDateString("sv-SE",{day:"numeric",month:"numeric"});
+    for(const p of ppl){const v=p.days[i].opened;if(!v)continue;const y1=y(acc+v),y0=y(acc);s+=`<rect class="b" data-t="${day} · ${esc(p.name)}: ${v} öppnade" x="${x0}" y="${y1}" width="${bw}" height="${Math.max(1,y0-y1-2)}" rx="2" fill="${col(p.name)}"/>`;acc+=v}
+    if(i%2===(n-1)%2)s+=`<text class="axis" x="${x0+bw/2}" y="${H-6}" text-anchor="middle">${day}</text>`}
+  el.innerHTML=s+"</svg>";el.querySelectorAll(".b").forEach(b=>{b.onmousemove=e=>showTip(e,esc(b.dataset.t));b.onmouseleave=hideTip})}
+function renderBoard(){const B=P.leader[lbMode],unit=lbMode==="commits"?"commits":"mergade PR",me=B.best_member;
+  document.getElementById("rankhero").innerHTML=me?`<div class="big">#${B.best_rank_ex_owner}<small> av ${B.total}</small></div><div class="txt">${esc(me.login)} har ${me.n} ${unit}, ägaren ${esc(P.owner)} ej räknad. ${B.next?`${B.next.gap} till för att gå om <b>${esc(B.next.login)}</b>.`:"Ni leder."}</div>`:`<div class="txt">Inte med i listan än.</div>`;
+  const max=Math.max(1,...B.top.filter(r=>!r.owner).map(r=>r.n));let prev=0;
+  document.getElementById("lb").innerHTML=B.top.map(r=>{const gap=r.rank-prev>1&&prev?'<div class="lbr"><span class="rk">⋮</span></div>':"";prev=r.rank;
+    return gap+`<div class="lbr ${r.member?"me":""} ${r.owner?"owner":""}"><span class="rk">${r.rank}</span><span class="nm">${esc(r.login)}</span><span class="bar"><i style="width:${Math.min(100,100*r.n/max)}%"></i></span><span class="v">${r.n}</span></div>`}).join("");
+  document.getElementById("lbnote").textContent=(lbMode==="commits"?`Commits i ${P.repo} enligt GitHub.`:`Mergade pull requests mot ${P.repo}.`)+" Konton för botar och kontot claude räknas inte. Ägarens stapel är kapad så att resten syns."}
+function renderFeed(){const ev=pushes().filter(e=>now()-e.time<7*86400).map(e=>({time:e.time,who:memberFor(e.branch),kind:"push",text:e.branch,meta:`${e.commits||""} commit${e.commits===1?"":"s"} pushad`}));
+  const all=ev.concat(P.feed).sort((a,b)=>b.time-a.time).slice(0,50),K={push:"PUSH",pr:"NY PR",merge:"MERGAD"};
+  document.getElementById("feed").innerHTML=all.map(e=>{const body=`<div class="top"><span class="kind">${K[e.kind]} · <span style="color:${col(e.who)}">${esc(e.who)}</span></span><span>${ago(e.time)}</span></div><div class="txt">${esc(e.text)}</div><div class="sub mono">${esc(e.meta)}</div>`;
+    return `<div class="ev"><span class="dot" style="background:${col(e.who)}"></span><div>${e.url?`<a href="${esc(e.url)}" target="_blank" rel="noopener">${body}</a>`:body}</div></div>`}).join("")||'<div class="sub">Inget de senaste 7 dagarna.</div>'}
+function pick(){P=D.projects.find(p=>p.id===PID)||D.projects[0];PID=P.id}
+function render(){if(!D)return;pick();renderTabs();renderMission();renderKpis();renderMembers();renderChart();renderBoard();renderFeed();
+  document.getElementById("upd").textContent=`data byggd för ${ago(D.built)} sedan`}
+async function loadData(){try{const r=await fetch("data.json?t="+Date.now(),{cache:"no-store"});D=await r.json();document.getElementById("err").textContent="";render()}catch(e){document.getElementById("err").textContent="Kunde inte läsa data"}}
+const etags={};
+async function loadLive(){if(!D)return;for(const p of D.projects){try{
+  const h={"Accept":"application/vnd.github+json"};if(etags[p.id])h["If-None-Match"]=etags[p.id];
+  const r=await fetch(`https://api.github.com/repos/${p.fork}/events?per_page=100`,{headers:h});if(r.status===304||!r.ok)continue;
+  etags[p.id]=r.headers.get("ETag");const ev=await r.json();
+  live[p.id]=ev.filter(e=>e.type==="PushEvent").map(e=>{const ref=(e.payload.ref||"").replace("refs/heads/","");return{time:Math.floor(Date.parse(e.created_at)/1000),branch:ref,commits:(e.payload.commits||[]).length||e.payload.size||0}})}catch(e){}}render()}
+document.getElementById("lbmode").onclick=e=>{const b=e.target.closest("button");if(!b)return;lbMode=b.dataset.m;document.querySelectorAll("#lbmode button").forEach(x=>x.classList.toggle("on",x===b));renderBoard()};
+setInterval(()=>{document.getElementById("clock").textContent=new Date().toLocaleTimeString("sv-SE")},1000);
+setInterval(()=>{if(D){renderMembers();document.getElementById("upd").textContent=`data byggd för ${ago(D.built)} sedan`}},30000);
+addEventListener("resize",()=>{if(D)renderChart()});
+loadData().then(loadLive);setInterval(loadData,120000);setInterval(loadLive,120000);
+</script>
+</body>
+</html>

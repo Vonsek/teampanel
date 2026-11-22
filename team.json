@@ -1,0 +1,14 @@
+{
+  "title": "Team Vonsek",
+  "account": "Vonsek",
+  "quiet_minutes": 60,
+  "stopped_minutes": 180,
+  "members": [
+    {"name": "Lucas", "prefixes": ["codex/", "ag/", "claude/"], "default": true}
+  ],
+  "ignore": ["claude", "github-actions", "dependabot", "copilot"],
+  "projects": [
+    {"id": "leonida", "name": "Leonida", "repo": "ItsNotRexed/Leonida", "fork": "Vonsek/Leonida", "milestones": "status_table"},
+    {"id": "x2w", "name": "Xbox2Windows", "repo": "R0Y00/Xbox2Windows", "fork": "Vonsek/Xbox2Windows", "milestones": "x2w"}
+  ]
+}
