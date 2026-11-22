@@ -1,15 +1,15 @@
 {
- "time": 1795355914,
+ "time": 1795356037,
  "members": [
   {
    "id": "vonsek2",
    "terminal": "kör",
-   "last_session": 1795355907,
+   "last_session": 1795355996,
    "branch": "vonsek2/fuzz40-tbuffer-missing-channel",
    "dirty": 0,
    "last_edit": 0,
    "commit": "feature_scan: answer open question 16 (UAV counters, typed buffer formats)",
-   "commit_time": 1795355793,
+   "commit_time": 1795355985,
    "task": {
     "id": "SHADER-65",
     "text": "",
@@ -21,7 +21,7 @@
   {
    "id": "vonsek3",
    "terminal": "kör",
-   "last_session": 1795355890,
+   "last_session": 1795355932,
    "branch": "vonsek3/shader-library-corpus",
    "dirty": 0,
    "last_edit": 0,
@@ -38,13 +38,19 @@
   {
    "id": "vonsek4",
    "terminal": "kör",
-   "last_session": 1795355914,
-   "branch": "",
+   "last_session": 1795356033,
+   "branch": "vonsek4/hashdict-one-archive",
    "dirty": 0,
    "last_edit": 0,
-   "commit": "Register #291's M1 tests with ctest; awc_names and bink_names replace unencodable stdout",
-   "commit_time": 1795348777,
-   "task": null
+   "commit": "hashdict.py: harvest one archive's carve folder instead of writing an empty dictionary",
+   "commit_time": 1795356017,
+   "task": {
+    "id": "EGEN-HASHDICT-ONE-ARCHIVE",
+    "text": "hashdict.py: en carve-mapp for ett enda arkiv (med egen index.json) ger tyst 0 strangar; skorda den som ett arkiv",
+    "pr": null,
+    "status": "tagen",
+    "time": 1795355880
+   }
   }
  ]
 }
