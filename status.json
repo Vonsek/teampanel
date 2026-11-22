@@ -1,5 +1,5 @@
 {
- "time": 1795356037,
+ "time": 1795356159,
  "members": [
   {
    "id": "vonsek2",
@@ -21,7 +21,7 @@
   {
    "id": "vonsek3",
    "terminal": "kör",
-   "last_session": 1795355932,
+   "last_session": 1795356108,
    "branch": "vonsek3/shader-library-corpus",
    "dirty": 0,
    "last_edit": 0,
@@ -38,18 +38,18 @@
   {
    "id": "vonsek4",
    "terminal": "kör",
-   "last_session": 1795356033,
-   "branch": "vonsek4/hashdict-one-archive",
-   "dirty": 0,
-   "last_edit": 0,
-   "commit": "hashdict.py: harvest one archive's carve folder instead of writing an empty dictionary",
-   "commit_time": 1795356017,
+   "last_session": 1795356148,
+   "branch": "vonsek4/gamedata-0drp-not-xml",
+   "dirty": 2,
+   "last_edit": 1795356135,
+   "commit": "hw_oracle test follows #1620's per-kernel MODE skip; three tools guard stdout",
+   "commit_time": 1795354503,
    "task": {
-    "id": "EGEN-HASHDICT-ONE-ARCHIVE",
-    "text": "hashdict.py: en carve-mapp for ett enda arkiv (med egen index.json) ger tyst 0 strangar; skorda den som ett arkiv",
+    "id": "EGEN-GAMEDATA-0DRP-XML",
+    "text": "gamedata_index.py: 0DRP-resurssidor med >95% utskrivbara byte klassas som ofullstandig XML (alla 337 i data.rpf)",
     "pr": null,
     "status": "tagen",
-    "time": 1795355880
+    "time": 1795356060
    }
   }
  ]
