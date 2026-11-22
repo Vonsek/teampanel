@@ -98,7 +98,11 @@ def graphql(query, variables):
 
 OURS_Q = """query($q:String!,$after:String){search(query:$q,type:ISSUE,first:100,after:$after){
   pageInfo{hasNextPage endCursor}
-  nodes{... on PullRequest{number title url headRefName state isDraft createdAt mergedAt updatedAt}}}}"""
+  nodes{... on PullRequest{number title url headRefName state isDraft createdAt mergedAt updatedAt closedAt
+    mergeable additions deletions changedFiles comments{totalCount}
+    commits(last:1){nodes{commit{statusCheckRollup{state}}}}
+    reviews(last:5){nodes{state author{login}}}
+    files(first:20){nodes{path}}}}}}"""
 
 
 def our_prs(repo, account):
@@ -112,11 +116,73 @@ def our_prs(repo, account):
             out.append({"number": n["number"], "title": n["title"], "html_url": n["url"],
                         "head": {"ref": n["headRefName"]}, "draft": n["isDraft"],
                         "state": "open" if n["state"] == "OPEN" else "closed",
-                        "merged_at": n["mergedAt"], "created_at": n["createdAt"], "updated_at": n["updatedAt"]})
+                        "merged_at": n["mergedAt"], "created_at": n["createdAt"], "updated_at": n["updatedAt"],
+                        "closed_at": n.get("closedAt"), "mergeable": n.get("mergeable"),
+                        "additions": n.get("additions", 0), "deletions": n.get("deletions", 0),
+                        "changed_files": n.get("changedFiles", 0), "comments": (n.get("comments") or {}).get("totalCount", 0),
+                        "ci": ((((n.get("commits") or {}).get("nodes") or [{}])[0] or {}).get("commit") or {}).get("statusCheckRollup") or {},
+                        "reviews": [(r.get("state"), (r.get("author") or {}).get("login", "")) for r in ((n.get("reviews") or {}).get("nodes") or []) if r],
+                        "files": [x["path"] for x in ((n.get("files") or {}).get("nodes") or []) if x]})
         if not d["pageInfo"]["hasNextPage"]:
             break
         after = d["pageInfo"]["endCursor"]
     return out
+
+
+def board_status(repo, account):
+    """Per-PR status from the project's coordination issue (Leonida's 'Coordinating who works on what')."""
+    try:
+        res, _ = api(f"search/issues?q=repo:{repo}+is:issue+is:open+in:title+%22Coordinating+who+works+on+what%22&per_page=1")
+        if not res.get("items"):
+            return {}, None
+        issue = res["items"][0]
+        body = issue.get("body") or ""
+    except Exception:
+        return {}, None
+    out = {}
+    sections = re.split(r"^### ", body, flags=re.M)
+    for sec in sections:
+        title = sec.split("\n", 1)[0].strip().lower()
+        text = sec
+        if title.startswith("ready for review"):
+            for m in re.finditer(r"#(\d+) \(([A-Z]+-[\w-]+)?;?([^)]*)\)", text):
+                info = out.setdefault(int(m.group(1)), {})
+                info["board"] = "ready"
+                if m.group(2):
+                    info["id"] = m.group(2)
+                ck = re.search(r"checked: ([^;)]*)", m.group(3) or "")
+                info["checked"] = [x.strip().lstrip("@") for x in ck.group(1).split(",")] if ck else []
+                info["ci_note"] = "not run" if "CI not run" in (m.group(3) or "") else ""
+        elif title.startswith("needs a rebase"):
+            for line in text.splitlines():
+                if line.lower().startswith(f"- @{account.lower()}:"):
+                    for n in re.findall(r"#(\d+)", line):
+                        out.setdefault(int(n), {})["board"] = "rebase"
+        elif title.startswith("already on"):
+            for n in re.findall(r"#(\d+)", text):
+                out.setdefault(int(n), {}).setdefault("board", "onmain")
+        elif title.startswith("open work") or title.startswith("claimed for"):
+            for m in re.finditer(r"\|\s*([A-Z]+-[\w-]+)\s*\|[^\n]*?#(\d+)", text):
+                out.setdefault(int(m.group(2)), {}).setdefault("id", m.group(1))
+    return out, {"number": issue["number"], "url": issue["html_url"]}
+
+
+AREA_BY_DIR = [("docs/", "Dokumentation"), ("tests/", "Tester"), ("runtime/", "Runtime"), ("tools/", "Verktyg"),
+               ("viewer/", "Visare"), ("game/", "Spelpaket"), (".github/", "CI")]
+AREA_BY_ID = {"SHADER": "Shader", "FUZZ": "Shader-fuzz", "TEST": "Tester", "BUILD": "Bygge", "D3D": "D3D12 → Vulkan",
+              "RT": "Runtime", "PROC": "Process/dokument", "ASSET": "Tillgångar"}
+
+
+def area_of(pr, board_id):
+    if board_id:
+        pre = board_id.split("-")[0]
+        if pre in AREA_BY_ID:
+            return AREA_BY_ID[pre]
+    counts = {}
+    for f in pr.get("files") or []:
+        name = next((n for d, n in AREA_BY_DIR if f.startswith(d)), "Övrigt")
+        counts[name] = counts.get(name, 0) + 1
+    return max(counts, key=counts.get) if counts else "Övrigt"
 
 
 def boot_milestones(repo, ref):
@@ -223,6 +289,18 @@ def push_events(fork, members):
     return out
 
 
+def pr_row(pr, st, b, account):
+    rv = [r for r, who in pr.get("reviews") or [] if who.lower() != account.lower()]
+    tid = b.get("id") or (re.search(r"\(([A-Z]+-[\w-]+)\)", pr["title"]) or [None, None])[1]
+    return {"n": pr["number"], "t": pr["title"], "u": pr["html_url"], "r": pr["head"]["ref"], "s": st,
+            "c": ts(pr["created_at"]), "m": ts(pr.get("merged_at")), "up": ts(pr["updated_at"]),
+            "cl": ts(pr.get("closed_at")), "a": pr.get("additions", 0), "d": pr.get("deletions", 0),
+            "f": pr.get("changed_files", 0), "cm": pr.get("comments", 0),
+            "cf": pr.get("mergeable") == "CONFLICTING", "ci": (pr.get("ci") or {}).get("state") or "",
+            "rv": rv[-1] if rv else "", "bd": b.get("board", ""), "ck": b.get("checked", []),
+            "id": tid or "", "ar": area_of(pr, tid)}
+
+
 def build_project(p, cfg, prev=None):
     members = cfg["members"]
     account = cfg["account"]
@@ -255,6 +333,7 @@ def build_project(p, cfg, prev=None):
                 a["n"] += 1
         leader = {"commits": rank(commit_rows, owner, [account]), "prs": rank(list(by_author.values()), owner, [account])}
     ours = our_prs(repo, account)
+    board, board_issue = board_status(repo, account) if p.get("board") else ({}, None)
 
     pushes = push_events(p["fork"], members)
     state = lambda pr: ("DRAFT" if pr["state"] == "open" and pr.get("draft") else
@@ -301,9 +380,8 @@ def build_project(p, cfg, prev=None):
         "leader": leader, "leader_built": prev.get("leader_built", int(now)) if prev else int(now),
         "feed": feed[:40],
         # compact list of our PRs so the browser can recompute stats with live data
-        "ours": [{"n": pr["number"], "t": pr["title"], "u": pr["html_url"], "r": pr["head"]["ref"],
-                  "s": state(pr), "c": ts(pr["created_at"]), "m": ts(pr.get("merged_at")),
-                  "up": ts(pr["updated_at"])} for pr in ours],
+        "ours": [pr_row(pr, state(pr), board.get(pr["number"], {}), account) for pr in ours],
+        "board_issue": board_issue,
     }
 
 

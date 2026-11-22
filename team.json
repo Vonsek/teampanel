@@ -13,7 +13,7 @@
   ],
   "ignore": ["claude", "github-actions", "dependabot", "copilot"],
   "projects": [
-    {"id": "leonida", "name": "Leonida", "repo": "ItsNotRexed/Leonida", "fork": "Vonsek/Leonida", "milestones": "status_table"},
+    {"id": "leonida", "name": "Leonida", "repo": "ItsNotRexed/Leonida", "fork": "Vonsek/Leonida", "milestones": "status_table", "board": true},
     {"id": "x2w", "name": "Xbox2Windows", "repo": "R0Y00/Xbox2Windows", "fork": "Vonsek/Xbox2Windows", "milestones": "x2w"}
   ]
 }

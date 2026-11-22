@@ -105,6 +105,33 @@ header{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;
 .ev a{color:inherit;text-decoration:none}.ev a:hover .txt{text-decoration:underline}
 .kind{font:600 11px var(--sans);letter-spacing:.05em;text-transform:uppercase;color:var(--ink2)}
 #tip{position:fixed;pointer-events:none;z-index:9;background:var(--strong);color:#fff;border-radius:6px;padding:6px 10px;font-size:12px;display:none}
+
+.prk{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;margin-bottom:22px}
+.prk div{padding:14px 16px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);background:var(--card)}
+.prk b{display:block;font:600 26px/1.2 var(--sans);color:var(--strong)}
+.prk span{font-size:12px;color:var(--ink3)}
+.prk .warn b{color:var(--yellow)}.prk .bad b{color:var(--red)}.prk .good b{color:var(--green)}
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:28px;margin-bottom:22px}
+.h4{font:600 14px var(--sans);color:var(--strong);margin:0 0 10px}
+.areas{display:grid;gap:6px}
+.arow{display:grid;grid-template-columns:130px 1fr 70px;gap:10px;align-items:center;font-size:13px}
+.arow .bar{height:10px;border-radius:2px;background:#F1F0EC;overflow:hidden;display:flex}
+.arow .bar i{display:block;height:100%}
+.arow .v{font:12px var(--mono);text-align:right;color:var(--ink2)}
+.filters{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.filters button{all:unset;cursor:pointer;font:500 12px var(--sans);padding:5px 10px;border:1px solid var(--line);border-radius:6px;color:var(--ink2);background:var(--card)}
+.filters button.on{background:var(--strong);color:#fff;border-color:var(--strong)}
+.tbl{width:100%;border-collapse:collapse;font-size:13px}
+.tbl th{text-align:left;font:600 12px var(--sans);color:var(--ink3);padding:8px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
+.tbl td{padding:8px;border-bottom:1px solid var(--line);vertical-align:top}
+.tbl td.num{font:12px var(--mono);color:var(--ink2);white-space:nowrap;text-align:right}
+.tbl a{color:var(--ink);text-decoration:none}.tbl a:hover{text-decoration:underline}
+.tag{font:600 10px var(--sans);letter-spacing:.05em;text-transform:uppercase;padding:2px 8px;border-radius:9999px;white-space:nowrap;background:#F1F0EC;color:var(--ink2)}
+.tag.waiting{background:var(--blue-bg);color:var(--blue)}.tag.approved{background:var(--green-bg);color:var(--green)}
+.tag.changes,.tag.cifail{background:var(--red-bg);color:var(--red)}.tag.rebase{background:var(--yellow-bg);color:var(--yellow)}
+.tblwrap{overflow-x:auto}
+.more{all:unset;cursor:pointer;margin-top:12px;font:500 13px var(--sans);color:var(--blue)}
+@media (max-width:900px){.two{grid-template-columns:1fr}.arow{grid-template-columns:100px 1fr 60px}}
 @media (max-width:1100px){.r1,.r3{grid-template-columns:1fr}}
 @media (max-width:640px){
   .wrap{padding:20px 16px 40px}.brand h1{font-size:28px}.hud{width:100%}
@@ -139,6 +166,20 @@ header{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;
       <div class="note" id="goal"></div>
     </div>
     <div class="kpis" id="kpis"></div>
+  </section>
+
+  <section class="panel" id="prsec" style="margin-bottom:20px">
+    <div class="ptitle">Mina pull requests <small id="prsub"></small></div>
+    <div class="prk" id="prk"></div>
+    <div class="two">
+      <div><div class="h4">Öppnade och mergade per dag, 14 dagar</div><div class="legend"><span><i style="background:#C9C7C0"></i>öppnade</span><span><i style="background:#1F6C9F"></i>mergade</span></div><div id="flow"></div></div>
+      <div><div class="h4">Per område</div><div class="legend"><span><i style="background:#1F6C9F"></i>mergade</span><span><i style="background:#9EC5E8"></i>öppna</span><span><i style="background:#E3B5B4"></i>stängda</span></div><div class="areas" id="areas"></div></div>
+    </div>
+    <div class="h4">Öppna pull requests</div>
+    <div class="filters" id="filters"></div>
+    <div class="tblwrap"><table class="tbl"><thead><tr><th>PR</th><th>Medlem</th><th>Område</th><th>Status</th><th style="text-align:right">Ålder</th><th style="text-align:right">Ändringar</th><th style="text-align:right">Komm.</th></tr></thead><tbody id="prrows"></tbody></table></div>
+    <button class="more" id="more"></button>
+    <div class="note" id="prnote"></div>
   </section>
 
   <section class="members" id="members"></section>
@@ -236,9 +277,55 @@ function renderFeed(){const ev=pushes().filter(e=>now()-e.time<7*86400).map(e=>(
   const all=ev.concat(P.feed).sort((a,b)=>b.time-a.time).slice(0,50),K={push:"PUSH",pr:"NY PR",merge:"MERGAD"};
   document.getElementById("feed").innerHTML=all.map(e=>{const body=`<div class="top"><span class="kind">${K[e.kind]} · ${esc(e.who)}</span><span>${ago(e.time)}</span></div><div class="txt">${esc(e.text)}</div><div class="sub mono">${esc(e.meta)}</div>`;
     return `<div class="ev"><span class="dot" style="background:${col(e.who)}"></span><div>${e.url?`<a href="${esc(e.url)}" target="_blank" rel="noopener">${body}</a>`:body}</div></div>`}).join("")||'<div class="sub">Inget de senaste 7 dagarna.</div>'}
+
+let prFilter="all",prLimit=40;
+const STXT={waiting:"väntar på granskning",approved:"godkänd",changes:"ändringar begärda",rebase:"behöver rebase",cifail:"CI fel",onmain:"redan i main",draft:"utkast"};
+function prState(x){if(x.s==="MERGED")return"merged";if(x.s==="CLOSED")return"closed";if(x.cf||x.bd==="rebase")return"rebase";
+  if(x.rv==="CHANGES_REQUESTED")return"changes";if(x.ci==="FAILURE"||x.ci==="ERROR")return"cifail";if(x.rv==="APPROVED")return"approved";
+  if(x.bd==="onmain")return"onmain";if(x.s==="DRAFT")return"draft";return"waiting"}
+function median(a){if(!a.length)return 0;const b=a.slice().sort((x,y)=>x-y),m=b.length>>1;return b.length%2?b[m]:(b[m-1]+b[m])/2}
+function dur(sec){if(!sec)return"–";const h=sec/3600;return h<1?Math.round(sec/60)+" min":h<48?h.toFixed(1).replace(".",",")+" h":Math.round(h/24)+" d"}
+function renderPRs(){const all=(P.allOurs||[]),t=now();
+  const open=all.filter(x=>x.s==="OPEN"||x.s==="DRAFT"),merged=all.filter(x=>x.s==="MERGED"),closed=all.filter(x=>x.s==="CLOSED");
+  const cnt=k=>open.filter(x=>prState(x)===k).length;
+  const ttm=merged.map(x=>x.m-x.c).filter(x=>x>0),m24=merged.filter(x=>t-x.m<86400).length,o24=all.filter(x=>t-x.c<86400).length;
+  const rate=merged.length+closed.length?Math.round(100*merged.length/(merged.length+closed.length)):0;
+  const lines=all.reduce((s,x)=>s+(x.a||0)+(x.d||0),0);
+  document.getElementById("prsub").textContent=`kontot ${D.account} i ${P.repo}, alla medlemmar`;
+  document.getElementById("prk").innerHTML=[
+    ["",all.length,"PR:er totalt"],["",open.length,"öppna nu"],["good",merged.length,"mergade"],["",closed.length,"stängda utan merge"],
+    ["",cnt("waiting"),"väntar på granskning"],["good",cnt("approved"),"godkända, ej mergade"],["bad",cnt("changes"),"ändringar begärda"],
+    ["warn",cnt("rebase"),"behöver rebase"],["bad",cnt("cifail"),"CI fel"],["",o24,"öppnade senaste 24 h"],["good",m24,"mergade senaste 24 h"],
+    ["",rate+" %","merge-andel av stängda"],["",dur(median(ttm)),"median tid till merge"],["",lines.toLocaleString("sv-SE"),"rader ändrade"]]
+    .map(([c,v,l])=>`<div class="${c}"><b>${v}</b><span>${l}</span></div>`).join("");
+  // flow chart
+  const el=document.getElementById("flow"),W=el.clientWidth||460,H=170,pl=30,pr=6,pt=6,pb=22;const d=new Date();d.setHours(0,0,0,0);const d0=Math.floor(d/1000);
+  const days=[...Array(14)].map((_,i)=>{const st=d0-(13-i)*86400;return{st,o:all.filter(x=>x.c>=st&&x.c<st+86400).length,m:all.filter(x=>x.m>=st&&x.m<st+86400).length}});
+  const raw=Math.max(2,...days.flatMap(x=>[x.o,x.m])),ts=Math.ceil(raw/4),tk=Math.ceil(raw/ts),max=ts*tk,gw=(W-pl-pr)/14,bw=Math.max(3,Math.min(12,(gw-6)/2)),y=v=>pt+(H-pt-pb)*(1-v/max);
+  let sv=`<svg width="${W}" height="${H}">`;
+  for(let k=0;k<=tk;k++){const yy=y(k*ts);sv+=`<line x1="${pl}" x2="${W-pr}" y1="${yy}" y2="${yy}" stroke="#EAEAEA" ${k?'stroke-dasharray="2 4"':""}/><text class="axis" x="${pl-6}" y="${yy+4}" text-anchor="end">${k*ts}</text>`}
+  days.forEach((x,i)=>{const cx=pl+gw*i+gw/2,lab=new Date(x.st*1000).toLocaleDateString("sv-SE",{day:"numeric",month:"numeric"});
+    [[x.o,"#C9C7C0",cx-bw-1,"öppnade"],[x.m,"#1F6C9F",cx+1,"mergade"]].forEach(([v,c,x0,l])=>{if(v)sv+=`<rect class="b" data-t="${lab}: ${v} ${l}" x="${x0}" y="${y(v)}" width="${bw}" height="${H-pb-y(v)}" rx="2" fill="${c}"/>`});
+    if(i%2===1)sv+=`<text class="axis" x="${cx}" y="${H-5}" text-anchor="middle">${lab}</text>`});
+  el.innerHTML=sv+"</svg>";el.querySelectorAll(".b").forEach(b=>{b.onmousemove=e=>showTip(e,esc(b.dataset.t));b.onmouseleave=hideTip});
+  // areas
+  const ar={};for(const x of all){const a=ar[x.ar||"Övrigt"]||(ar[x.ar||"Övrigt"]={m:0,o:0,c:0});x.s==="MERGED"?a.m++:x.s==="CLOSED"?a.c++:a.o++}
+  const rows=Object.entries(ar).sort((a,b)=>(b[1].m+b[1].o+b[1].c)-(a[1].m+a[1].o+a[1].c)),amax=Math.max(1,...rows.map(([_,v])=>v.m+v.o+v.c));
+  document.getElementById("areas").innerHTML=rows.map(([n,v])=>{const tot=v.m+v.o+v.c,w=k=>100*v[k]/amax;
+    return `<div class="arow"><span>${esc(n)}</span><span class="bar" title="${v.m} mergade, ${v.o} öppna, ${v.c} stängda"><i style="width:${w("m")}%;background:#1F6C9F"></i><i style="width:${w("o")}%;background:#9EC5E8"></i><i style="width:${w("c")}%;background:#E3B5B4"></i></span><span class="v">${v.m}/${tot}</span></div>`}).join("");
+  // filters + table
+  const F=[["all","Alla öppna",open.length],["waiting","Väntar",cnt("waiting")],["approved","Godkända",cnt("approved")],["changes","Ändringar begärda",cnt("changes")],["rebase","Behöver rebase",cnt("rebase")],["cifail","CI fel",cnt("cifail")],["draft","Utkast",cnt("draft")]];
+  const fe=document.getElementById("filters");fe.innerHTML=F.map(([k,l,n])=>`<button data-f="${k}" class="${k===prFilter?"on":""}">${l} (${n})</button>`).join("");
+  fe.querySelectorAll("button").forEach(b=>b.onclick=()=>{prFilter=b.dataset.f;prLimit=40;renderPRs()});
+  const list=open.filter(x=>prFilter==="all"||prState(x)===prFilter).sort((a,b)=>b.up-a.up);
+  document.getElementById("prrows").innerHTML=list.slice(0,prLimit).map(x=>{const st=prState(x);
+    return `<tr><td><a href="${esc(x.u)}" target="_blank" rel="noopener">#${x.n} ${esc(x.t)}</a>${x.id?` <span class="sub mono">${esc(x.id)}</span>`:""}</td><td>${esc(memberFor(x.r))}</td><td>${esc(x.ar||"")}</td>
+      <td><span class="tag ${st}">${STXT[st]||st}</span></td><td class="num">${ago(x.c)}</td><td class="num">+${x.a||0} −${x.d||0}</td><td class="num">${x.cm||0}</td></tr>`}).join("")||'<tr><td colspan="7" class="sub">Inga i den här gruppen.</td></tr>';
+  const mb=document.getElementById("more");mb.style.display=list.length>prLimit?"":"none";mb.textContent=`Visa ${Math.min(40,list.length-prLimit)} till av ${list.length-prLimit}`;mb.onclick=()=>{prLimit+=40;renderPRs()};
+  document.getElementById("prnote").innerHTML=`Status kommer från GitHub (granskningar, konflikter, CI) och från projektets koordineringstavla${P.board_issue?` (<a href="${esc(P.board_issue.url)}" target="_blank" rel="noopener">#${P.board_issue.number}</a>)`:""}, där "behöver rebase" listas. Område tas från uppgiftens ID (SHADER, TEST, D3D …) eller från vilka mappar PR:en ändrar.`}
 function pick(){P=D.projects.find(p=>p.id===PID)||D.projects[0];PID=P.id}
 const prLive={};let lastLive=0,liveErr="";
-function recompute(p){if(!p.ours)return;const byN=new Map(p.ours.map(x=>[x.n,x]));for(const x of (prLive[p.id]||[]))byN.set(x.n,x);const all=[...byN.values()],t=now();
+function recompute(p){if(!p.ours)return;const byN=new Map(p.ours.map(x=>[x.n,x]));for(const x of (prLive[p.id]||[]))byN.set(x.n,Object.assign({},byN.get(x.n)||{},x));const all=[...byN.values()],t=now();p.allOurs=all;
   const d=new Date();d.setHours(0,0,0,0);const d0=Math.floor(d/1000);
   p.people=p.people.map(pp=>{const prs=all.filter(x=>memberFor(x.r)===pp.name),days=[];
     for(let i=13;i>=0;i--){const st=d0-i*86400;days.push({start:st,opened:prs.filter(x=>x.c>=st&&x.c<st+86400).length,merged:prs.filter(x=>x.m>=st&&x.m<st+86400).length})}
@@ -250,7 +337,7 @@ function recompute(p){if(!p.ours)return;const byN=new Map(p.ours.map(x=>[x.n,x])
     if(x.m&&t-x.m<7*86400)p.feed.push({time:x.m,who,kind:"merge",text:x.t,meta:`PR #${x.n} mergad`,url:x.u})}}
 const since=t=>now()-t<60?"nyss":`för ${ago(t)} sedan`;
 function status_line(){return `Data uppdaterad ${since(D.built)} · topplistan ${since(D.projects[0].leader_built||D.built)}${liveErr?" · "+liveErr:""}`}
-function render(){if(!D)return;pick();recompute(P);renderTabs();renderMission();renderKpis();renderMembers();renderChart();renderBoard();renderFeed();
+function render(){if(!D)return;pick();recompute(P);renderTabs();renderMission();renderKpis();renderPRs();renderMembers();renderChart();renderBoard();renderFeed();
   document.getElementById("upd").textContent=status_line()}
 async function getJSON(u){try{const r=await fetch(u+(u.includes("?")?"&":"?")+"t="+Date.now(),{cache:"no-store"});return r.ok?await r.json():null}catch(e){return null}}
 async function loadData(){
@@ -274,7 +361,7 @@ async function loadLive(){if(!D)return;const p=P||D.projects[0];
 document.getElementById("lbmode").onclick=e=>{const b=e.target.closest("button");if(!b)return;lbMode=b.dataset.m;document.querySelectorAll("#lbmode button").forEach(x=>x.classList.toggle("on",x===b));renderBoard()};
 setInterval(()=>{document.getElementById("clock").textContent=new Date().toLocaleTimeString("sv-SE")},1000);
 setInterval(()=>{if(D){renderMembers();document.getElementById("upd").textContent=status_line()}},30000);
-addEventListener("resize",()=>{if(D)renderChart()});
+addEventListener("resize",()=>{if(D){renderChart();renderPRs()}});
 loadData().then(()=>{loadLive()});setInterval(loadData,60000);setInterval(loadLive,150000);
 </script>
 </body>
