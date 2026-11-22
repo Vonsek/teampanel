@@ -249,10 +249,15 @@ function recompute(p){if(!p.ours)return;const byN=new Map(p.ours.map(x=>[x.n,x])
   p.feed=[];for(const x of all){const who=memberFor(x.r);if(t-x.c<7*86400)p.feed.push({time:x.c,who,kind:"pr",text:x.t,meta:`PR #${x.n} öppnad`,url:x.u});
     if(x.m&&t-x.m<7*86400)p.feed.push({time:x.m,who,kind:"merge",text:x.t,meta:`PR #${x.n} mergad`,url:x.u})}}
 const since=t=>now()-t<60?"nyss":`för ${ago(t)} sedan`;
-function status_line(){return `Live från GitHub ${lastLive?since(lastLive):"hämtas…"} · topplistan byggd ${since(D.built)}${liveErr?" · "+liveErr:""}`}
+function status_line(){return `Data uppdaterad ${since(D.built)} · topplistan ${since(D.projects[0].leader_built||D.built)}${liveErr?" · "+liveErr:""}`}
 function render(){if(!D)return;pick();recompute(P);renderTabs();renderMission();renderKpis();renderMembers();renderChart();renderBoard();renderFeed();
   document.getElementById("upd").textContent=status_line()}
-async function loadData(){try{const r=await fetch("data.json?t="+Date.now(),{cache:"no-store"});D=await r.json();document.getElementById("err").textContent="";render()}catch(e){document.getElementById("err").textContent="Kunde inte läsa data"}}
+async function getJSON(u){try{const r=await fetch(u+(u.includes("?")?"&":"?")+"t="+Date.now(),{cache:"no-store"});return r.ok?await r.json():null}catch(e){return null}}
+async function loadData(){
+  const [pages,live]=await Promise.all([getJSON("data.json"),getJSON("https://raw.githubusercontent.com/Vonsek/teampanel/live/data.json")]);
+  const best=[pages,live].filter(x=>x&&x.projects).sort((a,b)=>b.built-a.built)[0];
+  if(!best){document.getElementById("err").textContent="Kunde inte läsa data";return}
+  D=best;if(D.local)LOCAL=D.local;document.getElementById("err").textContent="";render()}
 const etags={};
 async function gh(key,url){const h={"Accept":"application/vnd.github+json"};if(etags[key])h["If-None-Match"]=etags[key];
   const r=await fetch(url,{headers:h});if(r.status===304){lastLive=now();return null}
@@ -270,7 +275,7 @@ document.getElementById("lbmode").onclick=e=>{const b=e.target.closest("button")
 setInterval(()=>{document.getElementById("clock").textContent=new Date().toLocaleTimeString("sv-SE")},1000);
 setInterval(()=>{if(D){renderMembers();document.getElementById("upd").textContent=status_line()}},30000);
 addEventListener("resize",()=>{if(D)renderChart()});
-loadData().then(()=>{loadLive();loadLocal()});setInterval(loadLocal,60000);setInterval(loadData,300000);setInterval(loadLive,150000);
+loadData().then(()=>{loadLive()});setInterval(loadData,60000);setInterval(loadLive,150000);
 </script>
 </body>
 </html>

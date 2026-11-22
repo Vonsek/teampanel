@@ -1,7 +1,7 @@
-"""Publishes the local Claude Code terminals' progress to the team site.
+"""Publishes fresh team data and the local Claude Code terminals' progress to the team site.
 
-Runs on Lucas's PC every 2 minutes and uploads live/status.json to the
-`live` branch of Vonsek/teampanel. Only publishes: member id, whether the
+Runs on Lucas's PC every 2 minutes: rebuilds data.json (our PRs, pushes, progress;
+leaderboard every 15 min) and uploads it to the `live` branch of Vonsek/teampanel. Only publishes: member id, whether the
 terminal is running, last activity time, branch, number of changed files,
 last commit subject/time and the claimed task. No paths, logs or prompts.
 
@@ -10,6 +10,7 @@ Once:  python Z:\\Claude\\teampanel\\reporter\\rapport.py --once
 """
 import base64
 import glob
+import importlib
 import json
 import os
 import subprocess
@@ -22,7 +23,9 @@ KONTON = r"Z:\Claude\konton"
 MEMBERS = ["vonsek2", "vonsek3", "vonsek4"]
 REPO = "Vonsek/teampanel"
 BRANCH = "live"
-PATH = "status.json"
+PATH = "data.json"
+FULL_EVERY = 15 * 60
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 INTERVAL = 120
 NOWIN = getattr(subprocess, "CREATE_NO_WINDOW", 0)
 
@@ -105,7 +108,7 @@ def member_status(mid):
 
 
 def upload(data):
-    body = json.dumps(data, ensure_ascii=False, indent=1)
+    body = json.dumps(data, ensure_ascii=False, separators=(",", ":"))
     code, out = run(["gh", "api", f"repos/{REPO}/contents/{PATH}?ref={BRANCH}", "--jq", ".sha"])
     sha = out if code == 0 else ""
     payload = {"message": "Update live status", "branch": BRANCH,
@@ -125,11 +128,23 @@ def ensure_branch():
     run(["gh", "api", "-X", "POST", f"repos/{REPO}/git/refs", "-f", f"ref=refs/heads/{BRANCH}", "-f", f"sha={sha}"])
 
 
+_last_full = [0]
+
+
 def once():
-    data = {"time": int(time.time()), "members": [member_status(m) for m in MEMBERS]}
+    local = {"time": int(time.time()), "members": [member_status(m) for m in MEMBERS]}
+    code, token = run(["gh", "auth", "token"])
+    os.environ["GITHUB_TOKEN"] = token
+    import build
+    importlib.reload(build)  # picks up edits to build.py / team.json without a restart
+    fast = time.time() - _last_full[0] < FULL_EVERY
+    data = build.main(fast=fast, local=local)
+    if not fast:
+        _last_full[0] = time.time()
     ok, info = upload(data)
     stamp = datetime.now().strftime("%H:%M:%S")
-    summary = ", ".join(f"{m['id']}: {m['terminal']}" for m in data["members"])
+    summary = ", ".join(f"{m['id']}: {m['terminal']}" for m in local["members"])
+    summary += " | " + ", ".join(f"{p['name']} {p['milestones']['percent']}%" for p in data["projects"])
     print(f"{stamp} {'skickat' if ok else 'FEL: ' + info} ({summary})", flush=True)
 
 
