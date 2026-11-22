@@ -1,27 +1,27 @@
 {
- "time": 1795358574,
+ "time": 1795358696,
  "members": [
   {
    "id": "vonsek2",
    "terminal": "kör",
-   "last_session": 1795358572,
+   "last_session": 1795358694,
    "branch": "vonsek2/narrow-int-buffer-formats",
-   "dirty": 3,
-   "last_edit": 1795358032,
-   "commit": "rdna2spirv: global atomics load EXEC before the merge, not between merge and branch",
-   "commit_time": 1795356561,
+   "dirty": 0,
+   "last_edit": 0,
+   "commit": "rdna2spirv: 8- and 16-bit UINT/SINT typed buffer formats, measured on gfx1036",
+   "commit_time": 1795358618,
    "task": {
-    "id": "EGEN-NARROW-INT-FORMATS",
-    "text": "Translator typed-buffer FORMATS: 8/16-bit UINT and SINT formats (5,6,11,12,18,19,28,61,70) for loads and stores, SINT measured on gfx1036",
+    "id": "EGEN-NARROW-INT-GPU",
+    "text": "GPU fixture cs_fmt_int_narrow for #1871 (8/16-bit UINT/SINT typed buffers), expected words from a native gfx1036 run",
     "pr": null,
     "status": "tagen",
-    "time": 1795357560
+    "time": 1795358640
    }
   },
   {
    "id": "vonsek3",
    "terminal": "kör",
-   "last_session": 1795358505,
+   "last_session": 1795358695,
    "branch": "",
    "dirty": 0,
    "last_edit": 0,
@@ -38,18 +38,18 @@
   {
    "id": "vonsek4",
    "terminal": "kör",
-   "last_session": 1795358574,
-   "branch": "vonsek4/bink-audio-noaudio-skip",
+   "last_session": 1795358691,
+   "branch": "vonsek4/docs-dup-bullets",
    "dirty": 0,
    "last_edit": 0,
-   "commit": "bink_audio_test: a movie without audio tracks is a ctest skip, not a pass",
-   "commit_time": 1795358417,
+   "commit": "docs: drop merge-duplicated bullets in d3d12_vulkan.md and character_models.md",
+   "commit_time": 1795358665,
    "task": {
-    "id": "EGEN-BINK-NOAUDIO-SKIP",
-    "text": "bink_audio_test skriver SKIP for film utan ljudspar men returnerar 0 (ctest Passed); foljd av #1580",
-    "pr": 1862,
+    "id": "EGEN-DOCS-DUP-BULLETS",
+    "text": "docs: merge-dubblerade listpunkter i d3d12_vulkan.md (RTV/DSV, hash-table, wave64) och character_models.md (avbruten rad) + test",
+    "pr": 1870,
     "status": "pr",
-    "time": 1795358220
+    "time": 1795358580
    }
   }
  ]
