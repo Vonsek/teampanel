@@ -1,13 +1,13 @@
 {
- "time": 1795357899,
+ "time": 1795358051,
  "members": [
   {
    "id": "vonsek2",
    "terminal": "kör",
-   "last_session": 1795357896,
+   "last_session": 1795358025,
    "branch": "vonsek2/narrow-int-buffer-formats",
-   "dirty": 1,
-   "last_edit": 0,
+   "dirty": 2,
+   "last_edit": 1795358032,
    "commit": "rdna2spirv: global atomics load EXEC before the merge, not between merge and branch",
    "commit_time": 1795356561,
    "task": {
@@ -25,8 +25,8 @@
    "branch": "",
    "dirty": 0,
    "last_edit": 0,
-   "commit": "Runtime: O(1) LayoutTracker rollback and unlock tracker_mutex before vkQueuePresentKHR in VulkanPresenter",
-   "commit_time": 1795355274,
+   "commit": "runtime: set binding.va and host_readable on placed buffers",
+   "commit_time": 1795355146,
    "task": {
     "id": "EGEN-HOST-ADAPTER-LUID",
     "text": "d3d12_vulkan_device_test jamfor mot host-D3D12 pa standardadaptern i stallet for adaptern bakom Vulkan-enheten; faller pa tva-GPU-dator med LEONIDA_VK_DEVICE=radeon",
@@ -38,17 +38,17 @@
   {
    "id": "vonsek4",
    "terminal": "kör",
-   "last_session": 1795357897,
-   "branch": "vonsek4/docs-stale-repo-paths",
-   "dirty": 4,
-   "last_edit": 1795357896,
+   "last_session": 1795358001,
+   "branch": "",
+   "dirty": 0,
+   "last_edit": 0,
    "commit": "rdna2spirv: global atomics load EXEC before the merge, not between merge and branch",
    "commit_time": 1795356561,
    "task": {
     "id": "EGEN-DOCS-STALE-PATHS",
     "text": "docs: saves.md beskriver XGameSave-shim fran oppna #279 som om den fanns pa main; spirv_mini_interp utan .py; test att sokvagar i docs finns",
-    "pr": null,
-    "status": "tagen",
+    "pr": 1849,
+    "status": "pr",
     "time": 1795357800
    }
   }
