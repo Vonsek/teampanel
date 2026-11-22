@@ -1,32 +1,32 @@
 {
- "time": 1795358945,
+ "time": 1795359068,
  "members": [
   {
    "id": "vonsek2",
    "terminal": "kör",
-   "last_session": 1795358944,
+   "last_session": 1795359064,
    "branch": "vonsek2/narrow-int-gpu-fixture",
    "dirty": 0,
    "last_edit": 0,
    "commit": "GPU test cs_fmt_int_narrow: 8/16-bit UINT/SINT typed buffers, words from gfx1036",
    "commit_time": 1795358909,
    "task": {
-    "id": "EGEN-NARROW-INT-GPU",
-    "text": "GPU fixture cs_fmt_int_narrow for #1871 (8/16-bit UINT/SINT typed buffers), expected words from a native gfx1036 run",
-    "pr": 1880,
-    "status": "pr",
-    "time": 1795358640
+    "id": "EGEN-FREXP-LDEXP-HW",
+    "text": "Measure v_frexp_mant/exp and v_ldexp (f32, f16) denormal/NaN/edge handling natively on gfx1036 and make the translator follow it",
+    "pr": null,
+    "status": "tagen",
+    "time": 1795359000
    }
   },
   {
    "id": "vonsek3",
    "terminal": "kör",
-   "last_session": 1795358934,
+   "last_session": 1795359071,
    "branch": "",
    "dirty": 0,
    "last_edit": 0,
-   "commit": "Tests: synchronize vk_presenter_sync_test reader with condition_variable and join before EXPECT",
-   "commit_time": 1795357993,
+   "commit": "gta6rt: GAME: paths for folders, moves, copies and attributes (RT-97 follow-up)",
+   "commit_time": 1795355119,
    "task": {
     "id": "EGEN-VCMP16-OPSEL-GPU",
     "text": "GPU-fixtur for op_sel pa 16-bitars vektorjamforelser (v_cmp/v_cmpx f16/u16/i16), design.md-raden ar inte GPU-verifierad",
