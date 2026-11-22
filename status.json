@@ -1,32 +1,32 @@
 {
- "time": 1795357390,
+ "time": 1795357513,
  "members": [
   {
    "id": "vonsek2",
    "terminal": "kör",
-   "last_session": 1795357389,
-   "branch": "vonsek2/fuzz40-tbuffer-missing-channel",
+   "last_session": 1795357498,
+   "branch": "vonsek2/shader65-typed-buffer-scan",
    "dirty": 0,
    "last_edit": 0,
    "commit": "feature_scan: INVALID is modelled; d3d12_vulkan.md answers open question 16",
-   "commit_time": 1795357388,
+   "commit_time": 1795357408,
    "task": {
     "id": "SHADER-65",
     "text": "",
-    "pr": null,
-    "status": "tagen",
+    "pr": 1811,
+    "status": "pr",
     "time": 1795350060
    }
   },
   {
    "id": "vonsek3",
    "terminal": "kör",
-   "last_session": 1795357384,
+   "last_session": 1795357478,
    "branch": "",
    "dirty": 0,
    "last_edit": 0,
-   "commit": "hw_oracle test follows #1620's per-kernel MODE skip; three tools guard stdout",
-   "commit_time": 1795354503,
+   "commit": "feat(runtime): implement ID3D12Device::CreateConstantBufferView (GFX10 V#)",
+   "commit_time": 1795354877,
    "task": {
     "id": "EGEN-HOST-ADAPTER-LUID",
     "text": "d3d12_vulkan_device_test jamfor mot host-D3D12 pa standardadaptern i stallet for adaptern bakom Vulkan-enheten; faller pa tva-GPU-dator med LEONIDA_VK_DEVICE=radeon",
@@ -38,10 +38,10 @@
   {
    "id": "vonsek4",
    "terminal": "kör",
-   "last_session": 1795357387,
+   "last_session": 1795357523,
    "branch": "vonsek4/design-contract-dup-rows",
-   "dirty": 0,
-   "last_edit": 0,
+   "dirty": 2,
+   "last_edit": 1795357515,
    "commit": "rdna2spirv: global atomics load EXEC before the merge, not between merge and branch",
    "commit_time": 1795356561,
    "task": {
