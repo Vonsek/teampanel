@@ -1,5 +1,5 @@
 {
- "time": 1795356527,
+ "time": 1795356650,
  "members": [
   {
    "id": "vonsek2",
@@ -21,24 +21,24 @@
   {
    "id": "vonsek3",
    "terminal": "kör",
-   "last_session": 1795356481,
-   "branch": "vonsek3/host-adapter-luid",
-   "dirty": 2,
-   "last_edit": 1795356421,
+   "last_session": 1795356587,
+   "branch": "",
+   "dirty": 0,
+   "last_edit": 0,
    "commit": "hw_oracle test follows #1620's per-kernel MODE skip; three tools guard stdout",
    "commit_time": 1795354503,
    "task": {
     "id": "EGEN-HOST-ADAPTER-LUID",
     "text": "d3d12_vulkan_device_test jamfor mot host-D3D12 pa standardadaptern i stallet for adaptern bakom Vulkan-enheten; faller pa tva-GPU-dator med LEONIDA_VK_DEVICE=radeon",
-    "pr": null,
-    "status": "tagen",
+    "pr": 1785,
+    "status": "pr",
     "time": 1795356300
    }
   },
   {
    "id": "vonsek4",
    "terminal": "kör",
-   "last_session": 1795356438,
+   "last_session": 1795356620,
    "branch": "vonsek4/gamedata-0drp-not-xml",
    "dirty": 0,
    "last_edit": 0,
