@@ -1,5 +1,5 @@
 {
- "time": 1795358313,
+ "time": 1795358438,
  "members": [
   {
    "id": "vonsek2",
@@ -21,12 +21,12 @@
   {
    "id": "vonsek3",
    "terminal": "kör",
-   "last_session": 1795357660,
+   "last_session": 1795358428,
    "branch": "",
    "dirty": 0,
    "last_edit": 0,
-   "commit": "xdxr_build: one-workgroup sort for small builds, 256-element radix tiles",
-   "commit_time": 1795354885,
+   "commit": "runtime: remove duplicate bind_image call in write_image_descriptor",
+   "commit_time": 1795355441,
    "task": {
     "id": "EGEN-HOST-ADAPTER-LUID",
     "text": "d3d12_vulkan_device_test jamfor mot host-D3D12 pa standardadaptern i stallet for adaptern bakom Vulkan-enheten; faller pa tva-GPU-dator med LEONIDA_VK_DEVICE=radeon",
@@ -38,17 +38,17 @@
   {
    "id": "vonsek4",
    "terminal": "kör",
-   "last_session": 1795358313,
+   "last_session": 1795358441,
    "branch": "vonsek4/bink-audio-noaudio-skip",
-   "dirty": 2,
-   "last_edit": 1795358295,
-   "commit": "rdna2spirv: global atomics load EXEC before the merge, not between merge and branch",
-   "commit_time": 1795356561,
+   "dirty": 0,
+   "last_edit": 0,
+   "commit": "bink_audio_test: a movie without audio tracks is a ctest skip, not a pass",
+   "commit_time": 1795358417,
    "task": {
     "id": "EGEN-BINK-NOAUDIO-SKIP",
     "text": "bink_audio_test skriver SKIP for film utan ljudspar men returnerar 0 (ctest Passed); foljd av #1580",
-    "pr": null,
-    "status": "tagen",
+    "pr": 1862,
+    "status": "pr",
     "time": 1795358220
    }
   }
