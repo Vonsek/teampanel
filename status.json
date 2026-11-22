@@ -1,5 +1,5 @@
 {
- "time": 1795354811,
+ "time": 1795354935,
  "members": [
   {
    "id": "vonsek2",
@@ -21,13 +21,19 @@
   {
    "id": "vonsek3",
    "terminal": "kör",
-   "last_session": 1795354809,
-   "branch": "",
+   "last_session": 1795354917,
+   "branch": "vonsek3/shader-library-corpus",
    "dirty": 0,
    "last_edit": 0,
-   "commit": "Register #291's M1 tests with ctest; awc_names and bink_names replace unencodable stdout",
-   "commit_time": 1795348777,
-   "task": null
+   "commit": "hw_oracle test follows #1620's per-kernel MODE skip; three tools guard stdout",
+   "commit_time": 1795354503,
+   "task": {
+    "id": "EGEN-SHADERLIB-CORPUS",
+    "text": "Paketstyrt ctest: runtimens ShaderLibrary (XBCH-inflate, SHA-256, index.json) hittar varje riktig DXBC-container i <work>/shaders (LEONIDA_SHADERS)",
+    "pr": null,
+    "status": "tagen",
+    "time": 1795354800
+   }
   },
   {
    "id": "vonsek4",
