@@ -1,12 +1,12 @@
 {
- "time": 1795357775,
+ "time": 1795357899,
  "members": [
   {
    "id": "vonsek2",
    "terminal": "kör",
-   "last_session": 1795357737,
+   "last_session": 1795357896,
    "branch": "vonsek2/narrow-int-buffer-formats",
-   "dirty": 0,
+   "dirty": 1,
    "last_edit": 0,
    "commit": "rdna2spirv: global atomics load EXEC before the merge, not between merge and branch",
    "commit_time": 1795356561,
@@ -25,8 +25,8 @@
    "branch": "",
    "dirty": 0,
    "last_edit": 0,
-   "commit": "feat(runtime): implement ID3D12Device::CreateConstantBufferView (GFX10 V#)",
-   "commit_time": 1795354877,
+   "commit": "Runtime: O(1) LayoutTracker rollback and unlock tracker_mutex before vkQueuePresentKHR in VulkanPresenter",
+   "commit_time": 1795355274,
    "task": {
     "id": "EGEN-HOST-ADAPTER-LUID",
     "text": "d3d12_vulkan_device_test jamfor mot host-D3D12 pa standardadaptern i stallet for adaptern bakom Vulkan-enheten; faller pa tva-GPU-dator med LEONIDA_VK_DEVICE=radeon",
@@ -38,18 +38,18 @@
   {
    "id": "vonsek4",
    "terminal": "kör",
-   "last_session": 1795357776,
-   "branch": "",
-   "dirty": 0,
-   "last_edit": 0,
+   "last_session": 1795357897,
+   "branch": "vonsek4/docs-stale-repo-paths",
+   "dirty": 4,
+   "last_edit": 1795357896,
    "commit": "rdna2spirv: global atomics load EXEC before the merge, not between merge and branch",
    "commit_time": 1795356561,
    "task": {
-    "id": "EGEN-DOCS-DUP-ROWS-2",
-    "text": "docs/README.md och docs/testing.md: dubbelrader (models/audio/rsc8_audio, overlay-raderna) slas ihop; testet fran #1823 utvidgas",
-    "pr": 1835,
-    "status": "pr",
-    "time": 1795357560
+    "id": "EGEN-DOCS-STALE-PATHS",
+    "text": "docs: saves.md beskriver XGameSave-shim fran oppna #279 som om den fanns pa main; spirv_mini_interp utan .py; test att sokvagar i docs finns",
+    "pr": null,
+    "status": "tagen",
+    "time": 1795357800
    }
   }
  ]
