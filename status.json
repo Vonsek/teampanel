@@ -1,15 +1,15 @@
 {
- "time": 1795357267,
+ "time": 1795357390,
  "members": [
   {
    "id": "vonsek2",
    "terminal": "kör",
-   "last_session": 1795356440,
+   "last_session": 1795357389,
    "branch": "vonsek2/fuzz40-tbuffer-missing-channel",
    "dirty": 0,
    "last_edit": 0,
-   "commit": "feature_scan: answer open question 16 (UAV counters, typed buffer formats)",
-   "commit_time": 1795355985,
+   "commit": "feature_scan: INVALID is modelled; d3d12_vulkan.md answers open question 16",
+   "commit_time": 1795357388,
    "task": {
     "id": "SHADER-65",
     "text": "",
@@ -21,7 +21,7 @@
   {
    "id": "vonsek3",
    "terminal": "kör",
-   "last_session": 1795356985,
+   "last_session": 1795357384,
    "branch": "",
    "dirty": 0,
    "last_edit": 0,
@@ -38,18 +38,18 @@
   {
    "id": "vonsek4",
    "terminal": "kör",
-   "last_session": 1795357245,
-   "branch": "",
+   "last_session": 1795357387,
+   "branch": "vonsek4/design-contract-dup-rows",
    "dirty": 0,
    "last_edit": 0,
    "commit": "rdna2spirv: global atomics load EXEC before the merge, not between merge and branch",
    "commit_time": 1795356561,
    "task": {
-    "id": "EGEN-GAMEDATA-0DRP-XML",
-    "text": "gamedata_index.py: 0DRP-resurssidor med >95% utskrivbara byte klassas som ofullstandig XML (alla 337 i data.rpf)",
-    "pr": 1777,
-    "status": "pr",
-    "time": 1795356060
+    "id": "EGEN-DESIGN-DUP-ROWS",
+    "text": "docs/design.md: kontraktstabellen har 20 amnen med 2-6 divergerande dubbelrader (merge-rester); sla ihop till en rad per amne + test",
+    "pr": null,
+    "status": "tagen",
+    "time": 1795357320
    }
   }
  ]
