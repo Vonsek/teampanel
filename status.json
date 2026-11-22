@@ -1,12 +1,12 @@
 {
- "time": 1795358190,
+ "time": 1795358313,
  "members": [
   {
    "id": "vonsek2",
    "terminal": "kör",
-   "last_session": 1795358187,
+   "last_session": 1795358282,
    "branch": "vonsek2/narrow-int-buffer-formats",
-   "dirty": 2,
+   "dirty": 3,
    "last_edit": 1795358032,
    "commit": "rdna2spirv: global atomics load EXEC before the merge, not between merge and branch",
    "commit_time": 1795356561,
@@ -38,18 +38,18 @@
   {
    "id": "vonsek4",
    "terminal": "kör",
-   "last_session": 1795358156,
-   "branch": "",
-   "dirty": 0,
-   "last_edit": 0,
+   "last_session": 1795358313,
+   "branch": "vonsek4/bink-audio-noaudio-skip",
+   "dirty": 2,
+   "last_edit": 1795358295,
    "commit": "rdna2spirv: global atomics load EXEC before the merge, not between merge and branch",
    "commit_time": 1795356561,
    "task": {
-    "id": "EGEN-DOCS-STALE-PATHS",
-    "text": "docs: saves.md beskriver XGameSave-shim fran oppna #279 som om den fanns pa main; spirv_mini_interp utan .py; test att sokvagar i docs finns",
-    "pr": 1849,
-    "status": "pr",
-    "time": 1795357800
+    "id": "EGEN-BINK-NOAUDIO-SKIP",
+    "text": "bink_audio_test skriver SKIP for film utan ljudspar men returnerar 0 (ctest Passed); foljd av #1580",
+    "pr": null,
+    "status": "tagen",
+    "time": 1795358220
    }
   }
  ]
