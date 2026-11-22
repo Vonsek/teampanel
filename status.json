@@ -1,10 +1,10 @@
 {
- "time": 1795356405,
+ "time": 1795356527,
  "members": [
   {
    "id": "vonsek2",
    "terminal": "kör",
-   "last_session": 1795356178,
+   "last_session": 1795356440,
    "branch": "vonsek2/fuzz40-tbuffer-missing-channel",
    "dirty": 0,
    "last_edit": 0,
@@ -21,10 +21,10 @@
   {
    "id": "vonsek3",
    "terminal": "kör",
-   "last_session": 1795356390,
+   "last_session": 1795356481,
    "branch": "vonsek3/host-adapter-luid",
-   "dirty": 1,
-   "last_edit": 1795356405,
+   "dirty": 2,
+   "last_edit": 1795356421,
    "commit": "hw_oracle test follows #1620's per-kernel MODE skip; three tools guard stdout",
    "commit_time": 1795354503,
    "task": {
@@ -38,7 +38,7 @@
   {
    "id": "vonsek4",
    "terminal": "kör",
-   "last_session": 1795356403,
+   "last_session": 1795356438,
    "branch": "vonsek4/gamedata-0drp-not-xml",
    "dirty": 0,
    "last_edit": 0,
