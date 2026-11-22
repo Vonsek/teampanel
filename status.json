@@ -1,5 +1,5 @@
 {
- "time": 1795356650,
+ "time": 1795356773,
  "members": [
   {
    "id": "vonsek2",
@@ -21,7 +21,7 @@
   {
    "id": "vonsek3",
    "terminal": "kör",
-   "last_session": 1795356587,
+   "last_session": 1795356748,
    "branch": "",
    "dirty": 0,
    "last_edit": 0,
@@ -38,12 +38,12 @@
   {
    "id": "vonsek4",
    "terminal": "kör",
-   "last_session": 1795356620,
-   "branch": "vonsek4/gamedata-0drp-not-xml",
-   "dirty": 0,
+   "last_session": 1795356775,
+   "branch": "vonsek4/merge-incomplete-shards",
+   "dirty": 1,
    "last_edit": 0,
-   "commit": "gamedata_index.py: a 0DRP resource stream is a resource page, not text or XML",
-   "commit_time": 1795356351,
+   "commit": "hw_oracle test follows #1620's per-kernel MODE skip; three tools guard stdout",
+   "commit_time": 1795354503,
    "task": {
     "id": "EGEN-GAMEDATA-0DRP-XML",
     "text": "gamedata_index.py: 0DRP-resurssidor med >95% utskrivbara byte klassas som ofullstandig XML (alla 337 i data.rpf)",
