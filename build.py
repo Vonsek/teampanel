@@ -236,6 +236,10 @@ def build_project(p, cfg):
         "leader": {"commits": rank(commit_rows, owner, [account]),
                    "prs": rank(list(by_author.values()), owner, [account])},
         "feed": feed[:40],
+        # compact list of our PRs so the browser can recompute stats with live data
+        "ours": [{"n": pr["number"], "t": pr["title"], "u": pr["html_url"], "r": pr["head"]["ref"],
+                  "s": state(pr), "c": ts(pr["created_at"]), "m": ts(pr.get("merged_at")),
+                  "up": ts(pr["updated_at"])} for pr in ours],
     }
 
 

@@ -182,7 +182,7 @@ function renderTabs(){
   document.getElementById("ptag").textContent=P.name+" · teampanel, uppdateras automatiskt";document.title=D.title+" · "+P.name;
   const t=document.getElementById("ptabs");
   t.innerHTML=D.projects.map(p=>`<button data-p="${esc(p.id)}" class="${p.id===P.id?"on":""}">${esc(p.name)}</button>`).join("");
-  t.querySelectorAll("button").forEach(b=>b.onclick=()=>{PID=b.dataset.p;try{localStorage.setItem("teampanel.p",PID)}catch(e){};pick();render()});
+  t.querySelectorAll("button").forEach(b=>b.onclick=()=>{PID=b.dataset.p;try{localStorage.setItem("teampanel.p",PID)}catch(e){};pick();render();loadLive()});
 }
 function renderMission(){const m=P.milestones,C=2*Math.PI*96;
   document.getElementById("arc").setAttribute("stroke-dasharray",`${C*m.percent/100} ${C}`);
@@ -231,20 +231,40 @@ function renderFeed(){const ev=pushes().filter(e=>now()-e.time<7*86400).map(e=>(
   document.getElementById("feed").innerHTML=all.map(e=>{const body=`<div class="top"><span class="kind">${K[e.kind]} · ${esc(e.who)}</span><span>${ago(e.time)}</span></div><div class="txt">${esc(e.text)}</div><div class="sub mono">${esc(e.meta)}</div>`;
     return `<div class="ev"><span class="dot" style="background:${col(e.who)}"></span><div>${e.url?`<a href="${esc(e.url)}" target="_blank" rel="noopener">${body}</a>`:body}</div></div>`}).join("")||'<div class="sub">Inget de senaste 7 dagarna.</div>'}
 function pick(){P=D.projects.find(p=>p.id===PID)||D.projects[0];PID=P.id}
-function render(){if(!D)return;pick();renderTabs();renderMission();renderKpis();renderMembers();renderChart();renderBoard();renderFeed();
-  document.getElementById("upd").textContent=`data byggd för ${ago(D.built)} sedan`}
+const prLive={};let lastLive=0,liveErr="";
+function recompute(p){if(!p.ours)return;const byN=new Map(p.ours.map(x=>[x.n,x]));for(const x of (prLive[p.id]||[]))byN.set(x.n,x);const all=[...byN.values()],t=now();
+  const d=new Date();d.setHours(0,0,0,0);const d0=Math.floor(d/1000);
+  p.people=p.people.map(pp=>{const prs=all.filter(x=>memberFor(x.r)===pp.name),days=[];
+    for(let i=13;i>=0;i--){const st=d0-i*86400;days.push({start:st,opened:prs.filter(x=>x.c>=st&&x.c<st+86400).length,merged:prs.filter(x=>x.m>=st&&x.m<st+86400).length})}
+    return Object.assign({},pp,{opened:prs.length,merged:prs.filter(x=>x.s==="MERGED").length,open:prs.filter(x=>x.s==="OPEN"||x.s==="DRAFT").length,
+      closed:prs.filter(x=>x.s==="CLOSED").length,last_pr:Math.max(0,...prs.map(x=>Math.max(x.c,x.m))),days,
+      recent:prs.slice().sort((a,b)=>b.up-a.up).slice(0,6).map(x=>({number:x.n,title:x.t,url:x.u,state:x.s,branch:x.r,updated:x.up}))})});
+  for(const k of ["opened","merged","open","closed"])p.team[k]=p.people.reduce((s,x)=>s+x[k],0);
+  p.feed=[];for(const x of all){const who=memberFor(x.r);if(t-x.c<7*86400)p.feed.push({time:x.c,who,kind:"pr",text:x.t,meta:`PR #${x.n} öppnad`,url:x.u});
+    if(x.m&&t-x.m<7*86400)p.feed.push({time:x.m,who,kind:"merge",text:x.t,meta:`PR #${x.n} mergad`,url:x.u})}}
+const since=t=>now()-t<60?"nyss":`för ${ago(t)} sedan`;
+function status_line(){return `Live från GitHub ${lastLive?since(lastLive):"hämtas…"} · topplistan byggd ${since(D.built)}${liveErr?" · "+liveErr:""}`}
+function render(){if(!D)return;pick();recompute(P);renderTabs();renderMission();renderKpis();renderMembers();renderChart();renderBoard();renderFeed();
+  document.getElementById("upd").textContent=status_line()}
 async function loadData(){try{const r=await fetch("data.json?t="+Date.now(),{cache:"no-store"});D=await r.json();document.getElementById("err").textContent="";render()}catch(e){document.getElementById("err").textContent="Kunde inte läsa data"}}
 const etags={};
-async function loadLive(){if(!D)return;for(const p of D.projects){try{
-  const h={"Accept":"application/vnd.github+json"};if(etags[p.id])h["If-None-Match"]=etags[p.id];
-  const r=await fetch(`https://api.github.com/repos/${p.fork}/events?per_page=100`,{headers:h});if(r.status===304||!r.ok)continue;
-  etags[p.id]=r.headers.get("ETag");const ev=await r.json();
+async function gh(key,url){const h={"Accept":"application/vnd.github+json"};if(etags[key])h["If-None-Match"]=etags[key];
+  const r=await fetch(url,{headers:h});if(r.status===304){lastLive=now();return null}
+  if(!r.ok){liveErr=r.status===403||r.status===429?"GitHubs gräns för livehämtning nådd, försöker igen snart":"livehämtning misslyckades";return null}
+  liveErr="";lastLive=now();etags[key]=r.headers.get("ETag");return r.json()}
+async function loadLive(){if(!D)return;const p=P||D.projects[0];
+  try{const j=await gh("pr"+p.id,`https://api.github.com/repos/${p.repo}/pulls?state=all&sort=updated&direction=desc&per_page=50`);
+    if(j)prLive[p.id]=j.filter(x=>x.user&&x.user.login.toLowerCase()===D.account.toLowerCase()).map(x=>({n:x.number,t:x.title,u:x.html_url,r:x.head.ref,
+      s:x.state==="open"&&x.draft?"DRAFT":x.merged_at?"MERGED":x.state==="open"?"OPEN":"CLOSED",c:Math.floor(Date.parse(x.created_at)/1000),
+      m:x.merged_at?Math.floor(Date.parse(x.merged_at)/1000):0,up:Math.floor(Date.parse(x.updated_at)/1000)}))}catch(e){}
+  for(const p2 of [p]){try{
+  const ev=await gh("ev"+p2.id,`https://api.github.com/repos/${p2.fork}/events?per_page=100`);if(!ev)continue;const p=p2;
   live[p.id]=ev.filter(e=>e.type==="PushEvent").map(e=>{const ref=(e.payload.ref||"").replace("refs/heads/","");return{time:Math.floor(Date.parse(e.created_at)/1000),branch:ref,commits:(e.payload.commits||[]).length||e.payload.size||0}})}catch(e){}}render()}
 document.getElementById("lbmode").onclick=e=>{const b=e.target.closest("button");if(!b)return;lbMode=b.dataset.m;document.querySelectorAll("#lbmode button").forEach(x=>x.classList.toggle("on",x===b));renderBoard()};
 setInterval(()=>{document.getElementById("clock").textContent=new Date().toLocaleTimeString("sv-SE")},1000);
-setInterval(()=>{if(D){renderMembers();document.getElementById("upd").textContent=`data byggd för ${ago(D.built)} sedan`}},30000);
+setInterval(()=>{if(D){renderMembers();document.getElementById("upd").textContent=status_line()}},30000);
 addEventListener("resize",()=>{if(D)renderChart()});
-loadData().then(loadLive);setInterval(loadData,120000);setInterval(loadLive,120000);
+loadData().then(loadLive);setInterval(loadData,300000);setInterval(loadLive,150000);
 </script>
 </body>
 </html>
