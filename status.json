@@ -1,21 +1,21 @@
 {
- "time": 1795357513,
+ "time": 1795357653,
  "members": [
   {
    "id": "vonsek2",
    "terminal": "kör",
-   "last_session": 1795357498,
-   "branch": "vonsek2/shader65-typed-buffer-scan",
+   "last_session": 1795357647,
+   "branch": "vonsek2/narrow-int-buffer-formats",
    "dirty": 0,
    "last_edit": 0,
-   "commit": "feature_scan: INVALID is modelled; d3d12_vulkan.md answers open question 16",
-   "commit_time": 1795357408,
+   "commit": "rdna2spirv: global atomics load EXEC before the merge, not between merge and branch",
+   "commit_time": 1795356561,
    "task": {
-    "id": "SHADER-65",
-    "text": "",
-    "pr": 1811,
-    "status": "pr",
-    "time": 1795350060
+    "id": "EGEN-NARROW-INT-FORMATS",
+    "text": "Translator typed-buffer FORMATS: 8/16-bit UINT and SINT formats (5,6,11,12,18,19,28,61,70) for loads and stores, SINT measured on gfx1036",
+    "pr": null,
+    "status": "tagen",
+    "time": 1795357560
    }
   },
   {
@@ -38,18 +38,18 @@
   {
    "id": "vonsek4",
    "terminal": "kör",
-   "last_session": 1795357523,
-   "branch": "vonsek4/design-contract-dup-rows",
+   "last_session": 1795357647,
+   "branch": "vonsek4/docs-index-testing-dup-rows",
    "dirty": 2,
-   "last_edit": 1795357515,
-   "commit": "rdna2spirv: global atomics load EXEC before the merge, not between merge and branch",
-   "commit_time": 1795356561,
+   "last_edit": 1795357642,
+   "commit": "docs/design.md: one row per topic in the contract table",
+   "commit_time": 1795357548,
    "task": {
-    "id": "EGEN-DESIGN-DUP-ROWS",
-    "text": "docs/design.md: kontraktstabellen har 20 amnen med 2-6 divergerande dubbelrader (merge-rester); sla ihop till en rad per amne + test",
+    "id": "EGEN-DOCS-DUP-ROWS-2",
+    "text": "docs/README.md och docs/testing.md: dubbelrader (models/audio/rsc8_audio, overlay-raderna) slas ihop; testet fran #1823 utvidgas",
     "pr": null,
     "status": "tagen",
-    "time": 1795357320
+    "time": 1795357560
    }
   }
  ]
