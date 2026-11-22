@@ -257,7 +257,7 @@ async function loadData(){
   const [pages,live]=await Promise.all([getJSON("data.json"),getJSON("https://raw.githubusercontent.com/Vonsek/teampanel/live/data.json")]);
   const best=[pages,live].filter(x=>x&&x.projects).sort((a,b)=>b.built-a.built)[0];
   if(!best){document.getElementById("err").textContent="Kunde inte läsa data";return}
-  D=best;if(D.local)LOCAL=D.local;document.getElementById("err").textContent="";render()}
+  D=best;LOCAL=(live&&live.local)||D.local||LOCAL;document.getElementById("err").textContent="";render()}
 const etags={};
 async function gh(key,url){const h={"Accept":"application/vnd.github+json"};if(etags[key])h["If-None-Match"]=etags[key];
   const r=await fetch(url,{headers:h});if(r.status===304){lastLive=now();return null}
