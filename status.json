@@ -1,44 +1,44 @@
 {
- "time": 1795358820,
+ "time": 1795358945,
  "members": [
   {
    "id": "vonsek2",
    "terminal": "kör",
-   "last_session": 1795358795,
+   "last_session": 1795358944,
    "branch": "vonsek2/narrow-int-gpu-fixture",
-   "dirty": 7,
-   "last_edit": 1795358771,
-   "commit": "rdna2spirv: 8- and 16-bit UINT/SINT typed buffer formats, measured on gfx1036",
-   "commit_time": 1795358618,
+   "dirty": 0,
+   "last_edit": 0,
+   "commit": "GPU test cs_fmt_int_narrow: 8/16-bit UINT/SINT typed buffers, words from gfx1036",
+   "commit_time": 1795358909,
    "task": {
     "id": "EGEN-NARROW-INT-GPU",
     "text": "GPU fixture cs_fmt_int_narrow for #1871 (8/16-bit UINT/SINT typed buffers), expected words from a native gfx1036 run",
-    "pr": null,
-    "status": "tagen",
+    "pr": 1880,
+    "status": "pr",
     "time": 1795358640
    }
   },
   {
    "id": "vonsek3",
    "terminal": "kör",
-   "last_session": 1795358819,
+   "last_session": 1795358934,
    "branch": "",
    "dirty": 0,
    "last_edit": 0,
    "commit": "Tests: synchronize vk_presenter_sync_test reader with condition_variable and join before EXPECT",
    "commit_time": 1795357993,
    "task": {
-    "id": "EGEN-HOST-ADAPTER-LUID",
-    "text": "d3d12_vulkan_device_test jamfor mot host-D3D12 pa standardadaptern i stallet for adaptern bakom Vulkan-enheten; faller pa tva-GPU-dator med LEONIDA_VK_DEVICE=radeon",
-    "pr": 1785,
-    "status": "pr",
-    "time": 1795356300
+    "id": "EGEN-VCMP16-OPSEL-GPU",
+    "text": "GPU-fixtur for op_sel pa 16-bitars vektorjamforelser (v_cmp/v_cmpx f16/u16/i16), design.md-raden ar inte GPU-verifierad",
+    "pr": null,
+    "status": "tagen",
+    "time": 1795358880
    }
   },
   {
    "id": "vonsek4",
    "terminal": "kör",
-   "last_session": 1795358691,
+   "last_session": 1795358875,
    "branch": "vonsek4/docs-dup-bullets",
    "dirty": 0,
    "last_edit": 0,
