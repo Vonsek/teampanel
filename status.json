@@ -1,13 +1,13 @@
 {
- "time": 1795350957,
+ "time": 1795351081,
  "members": [
   {
    "id": "vonsek2",
    "terminal": "kör",
-   "last_session": 1795350949,
+   "last_session": 1795351079,
    "branch": "vonsek2/fuzz40-tbuffer-missing-channel",
-   "dirty": 1,
-   "last_edit": 0,
+   "dirty": 2,
+   "last_edit": 1795351075,
    "commit": "Register #291's M1 tests with ctest; awc_names and bink_names replace unencodable stdout",
    "commit_time": 1795348777,
    "task": {
