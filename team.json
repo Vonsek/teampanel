@@ -4,7 +4,9 @@
   "quiet_minutes": 60,
   "stopped_minutes": 180,
   "members": [
-    {"name": "Vonsek", "prefixes": ["codex/", "ag/", "claude/"], "default": true},
+    {"name": "Claude", "prefixes": ["claude/"], "default": true},
+    {"name": "Codex", "prefixes": ["codex/"]},
+    {"name": "Antigravity", "prefixes": ["ag/"]},
     {"name": "Vonsek2"},
     {"name": "Vonsek3"},
     {"name": "Vonsek4"}
