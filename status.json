@@ -1,13 +1,13 @@
 {
- "time": 1795358696,
+ "time": 1795358820,
  "members": [
   {
    "id": "vonsek2",
    "terminal": "kör",
-   "last_session": 1795358694,
-   "branch": "vonsek2/narrow-int-buffer-formats",
-   "dirty": 0,
-   "last_edit": 0,
+   "last_session": 1795358795,
+   "branch": "vonsek2/narrow-int-gpu-fixture",
+   "dirty": 7,
+   "last_edit": 1795358771,
    "commit": "rdna2spirv: 8- and 16-bit UINT/SINT typed buffer formats, measured on gfx1036",
    "commit_time": 1795358618,
    "task": {
@@ -21,12 +21,12 @@
   {
    "id": "vonsek3",
    "terminal": "kör",
-   "last_session": 1795358695,
+   "last_session": 1795358819,
    "branch": "",
    "dirty": 0,
    "last_edit": 0,
-   "commit": "runtime: remove duplicate bind_image call in write_image_descriptor",
-   "commit_time": 1795355441,
+   "commit": "Tests: synchronize vk_presenter_sync_test reader with condition_variable and join before EXPECT",
+   "commit_time": 1795357993,
    "task": {
     "id": "EGEN-HOST-ADAPTER-LUID",
     "text": "d3d12_vulkan_device_test jamfor mot host-D3D12 pa standardadaptern i stallet for adaptern bakom Vulkan-enheten; faller pa tva-GPU-dator med LEONIDA_VK_DEVICE=radeon",
