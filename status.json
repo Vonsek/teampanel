@@ -1,5 +1,5 @@
 {
- "time": 1795357145,
+ "time": 1795357267,
  "members": [
   {
    "id": "vonsek2",
@@ -38,12 +38,12 @@
   {
    "id": "vonsek4",
    "terminal": "kör",
-   "last_session": 1795356841,
-   "branch": "vonsek4/merge-incomplete-shards",
-   "dirty": 2,
-   "last_edit": 1795356847,
-   "commit": "hw_oracle test follows #1620's per-kernel MODE skip; three tools guard stdout",
-   "commit_time": 1795354503,
+   "last_session": 1795357245,
+   "branch": "",
+   "dirty": 0,
+   "last_edit": 0,
+   "commit": "rdna2spirv: global atomics load EXEC before the merge, not between merge and branch",
+   "commit_time": 1795356561,
    "task": {
     "id": "EGEN-GAMEDATA-0DRP-XML",
     "text": "gamedata_index.py: 0DRP-resurssidor med >95% utskrivbara byte klassas som ofullstandig XML (alla 337 i data.rpf)",
