@@ -1,15 +1,15 @@
 {
- "time": 1795355792,
+ "time": 1795355914,
  "members": [
   {
    "id": "vonsek2",
    "terminal": "kör",
-   "last_session": 1795355787,
+   "last_session": 1795355907,
    "branch": "vonsek2/fuzz40-tbuffer-missing-channel",
-   "dirty": 2,
-   "last_edit": 1795351075,
-   "commit": "Register #291's M1 tests with ctest; awc_names and bink_names replace unencodable stdout",
-   "commit_time": 1795348777,
+   "dirty": 0,
+   "last_edit": 0,
+   "commit": "feature_scan: answer open question 16 (UAV counters, typed buffer formats)",
+   "commit_time": 1795355793,
    "task": {
     "id": "SHADER-65",
     "text": "",
@@ -21,7 +21,7 @@
   {
    "id": "vonsek3",
    "terminal": "kör",
-   "last_session": 1795355698,
+   "last_session": 1795355890,
    "branch": "vonsek3/shader-library-corpus",
    "dirty": 0,
    "last_edit": 0,
@@ -30,15 +30,15 @@
    "task": {
     "id": "EGEN-SHADERLIB-CORPUS",
     "text": "Paketstyrt ctest: runtimens ShaderLibrary (XBCH-inflate, SHA-256, index.json) hittar varje riktig DXBC-container i <work>/shaders (LEONIDA_SHADERS)",
-    "pr": null,
-    "status": "tagen",
+    "pr": 1757,
+    "status": "pr",
     "time": 1795354800
    }
   },
   {
    "id": "vonsek4",
    "terminal": "kör",
-   "last_session": 1795354130,
+   "last_session": 1795355914,
    "branch": "",
    "dirty": 0,
    "last_edit": 0,
