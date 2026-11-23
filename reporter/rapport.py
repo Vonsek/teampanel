@@ -159,7 +159,15 @@ def live_once():
     import agents
     importlib.reload(agents)
     data = agents.collect(lambda mid: member_status(mid)["terminal"])
-    sig = json.dumps(data["agents"], sort_keys=True)
+    try:
+        import events
+        importlib.reload(events)
+        data["events"] = events.collect()
+        data["score"] = events.load().get("score")
+    except Exception as e:
+        print("fel (events):", e, flush=True)
+        data["events"] = []
+    sig = json.dumps([data["agents"], data["events"][:5], data.get("score")], sort_keys=True)
     now = time.time()
     if now - _live["sent"] < LIVE_MIN_GAP:
         return

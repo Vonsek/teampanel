@@ -1,2 +1,4 @@
 site/data.json
 __pycache__/
+
+reporter/events_state.json*

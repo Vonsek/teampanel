@@ -52,7 +52,7 @@ header{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;
 .step.big{grid-column:1/-1}
 .step .w{margin-left:auto;font:400 12px var(--mono);color:var(--ink3);flex:none}
 .note{font-size:13px;color:var(--ink3);margin-top:18px;line-height:1.6}
-.kpis{display:grid;grid-template-columns:1fr 1fr;gap:20px}.lvwarn{display:none;margin:0 0 12px;padding:10px 14px;border-radius:8px;background:#FBEAEA;color:#8A1C1C;font-size:14px}.lvb{display:inline-block;padding:2px 8px;border-radius:999px;font-size:12px;font-weight:600}.lvb.ok{background:#E3F1E6;color:#1E6B34}.lvb.quiet{background:#FFF4D6;color:#7A5A00}.lvb.off{background:#EEE;color:#666}.cr4{grid-template-columns:repeat(4,1fr);margin:6px 0 20px}.crgrid{display:grid;grid-template-columns:1.6fr 1fr;gap:28px}@media(max-width:900px){.cr4{grid-template-columns:1fr 1fr}.crgrid{grid-template-columns:1fr}}.crrow{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--line);font-size:14px}.crrow.me{font-weight:600}
+.kpis{display:grid;grid-template-columns:1fr 1fr;gap:20px}.vtabs{display:flex;gap:8px;margin:0 0 22px}.vtabs button{font:600 15px var(--sans);padding:9px 18px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--ink3);cursor:pointer}.vtabs button.on{background:var(--strong);color:#fff;border-color:var(--strong)}.score{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:16px;margin:0 0 18px}.score .sc{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px 22px}.score .k{font:500 13px var(--sans);color:var(--ink3)}.score .v{font:600 46px/1.1 var(--serif);color:var(--strong);margin:6px 0 2px}.score .s{font-size:14px;color:var(--ink3)}.score .up{color:#1E6B34;font-weight:600}.flow .plus{font:700 16px var(--sans);color:#1E6B34}.flowwait{margin:10px 2px 0;font-size:14px;color:var(--ink3)}@media(max-width:760px){.score{grid-template-columns:1fr}.score .v{font-size:38px}}.flowhead{font-size:14px;color:var(--ink3);margin:0 0 10px}.flowwarn{display:none;margin:0 0 12px;padding:10px 14px;border-radius:8px;background:#FBEAEA;color:#8A1C1C;font-size:14px}.flow{list-style:none;margin:0;padding:0;background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden}.flow li{display:grid;grid-template-columns:92px 120px 150px 1fr;gap:14px;align-items:baseline;padding:13px 20px;border-bottom:1px solid var(--line);font-size:17px;line-height:1.45;transition:background 2.5s}.flow li:last-child{border-bottom:0}.flow li.fresh{background:#FFF6D6;transition:none}.flow .tm{font:500 15px ui-monospace,Consolas,monospace;color:var(--ink3)}.flow .ag{font-weight:600;color:var(--strong)}.flow .ty{font-size:13px;font-weight:700;letter-spacing:.02em;padding:3px 10px;border-radius:999px;justify-self:start}.flow .ty.commit{background:#E8EEF6;color:#1F4E79}.flow .ty.pr{background:#FFF1DB;color:#8A5200}.flow .ty.merge{background:#E3F1E6;color:#1E6B34}.flow .tt a{color:var(--ink);text-decoration:none}.flow .tt a:hover{text-decoration:underline}.flow .br{display:block;font-size:13px;color:var(--ink3)}@media(max-width:760px){.flow li{grid-template-columns:70px 1fr;gap:4px 10px;font-size:15px}.flow .ty{grid-column:2}.flow .tt{grid-column:1/-1}}.lvwarn{display:none;margin:0 0 12px;padding:10px 14px;border-radius:8px;background:#FBEAEA;color:#8A1C1C;font-size:14px}.lvb{display:inline-block;padding:2px 8px;border-radius:999px;font-size:12px;font-weight:600}.lvb.ok{background:#E3F1E6;color:#1E6B34}.lvb.quiet{background:#FFF4D6;color:#7A5A00}.lvb.off{background:#EEE;color:#666}.cr4{grid-template-columns:repeat(4,1fr);margin:6px 0 20px}.crgrid{display:grid;grid-template-columns:1.6fr 1fr;gap:28px}@media(max-width:900px){.cr4{grid-template-columns:1fr 1fr}.crgrid{grid-template-columns:1fr}}.crrow{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--line);font-size:14px}.crrow.me{font-weight:600}
 .kpi{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:24px;display:flex;flex-direction:column;justify-content:space-between;min-height:128px}
 .kpi .k{font:500 13px var(--sans);color:var(--ink3)}
 .kpi .v{font:600 44px/1.05 var(--serif);letter-spacing:-.01em;color:var(--strong);margin:10px 0 4px}
@@ -152,6 +152,15 @@ header{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;
     <nav class="ptabs" id="ptabs"></nav>
     <div class="hud"><span class="err" id="err"></span><span id="upd">laddar…</span><span id="clock">--:--:--</span></div>
   </header>
+  <nav class="vtabs" id="vtabs"><button data-v="flow" class="on">Flöde</button><button data-v="ov">Översikt</button></nav>
+  <section id="flowview">
+    <div class="score" id="score"></div>
+    <div class="flowhead"><span id="flsub">laddar…</span></div>
+    <div class="flowwarn" id="flwarn"></div>
+    <ol class="flow" id="flowlist"></ol>
+    <div class="flowwait" id="flwait"></div>
+  </section>
+  <div id="ov" hidden>
 
   <section class="row r1">
     <div class="panel">
@@ -217,6 +226,7 @@ header{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;
     <div class="ptitle">Senaste händelser <small>pushar och PR:er, 7 dagar</small></div>
     <div class="feed" id="feed"></div>
   </section>
+  </div>
 </div>
 <div id="tip"></div>
 <script>
@@ -272,7 +282,7 @@ async function loadAgents(){const api="https://api.github.com/repos/"+D.account+
     if(!r.ok)r=await fetch(`https://raw.githubusercontent.com/${D.account}/teampanel/live/agents.json?t=${Date.now()}`,{cache:"no-store"});
     else agTag=r.headers.get("ETag");
     if(r.ok){const j=await r.json();if(!AG||j.time!==AG.time){AG=j}agFetched=now()}}catch(e){}
-  renderAgents()}
+  renderAgents();renderFlow()}
 function renderAgents(){const sub=document.getElementById("lvsub"),w=document.getElementById("lvwarn");if(!AG){sub.textContent="ingen data än";return}
   const age=now()-AG.time;sub.textContent=`senast uppdaterad för ${age<90?age+" s":ago(AG.time)} sedan`;
   w.style.display=age>180?"block":"none";w.textContent=age>180?`Ingen ny status på ${ago(AG.time)}. Rapportören på datorn kör troligen inte, eller datorn sover.`:"";
@@ -280,7 +290,27 @@ function renderAgents(){const sub=document.getElementById("lvsub"),w=document.ge
   document.getElementById("lvbody").innerHTML=rows.map(a=>{const m=(now()-a.last)/60;
     const st=a.running===false?["off","STOPPAD"]:m<15?["ok","AKTIV"]:m<60?["quiet","TYST"]:a.running?["quiet","KÖR, TYST"]:["off","INAKTIV"];
     const task=a.task?`${esc(a.task.id)}${a.task.pr?` · <a href="https://github.com/ItsNotRexed/Leonida/pull/${a.task.pr}" target="_blank">#${a.task.pr}</a>`:""}`:"";
-    return `<tr><td>${esc(a.name)}</td><td><span class="lvb ${st[0]}">${st[1]}</span></td><td>${a.last?ago(a.last)+" sedan":"–"}</td><td><div>${esc(a.branch||"")}</div><div class="note" style="margin:0">${task}</div></td><td style="text-align:right">${a.claims_today}</td><td style="text-align:right">${a.prs_today}</td></tr>`}).join("")}function renderKpis(){const t=P.team,L=P.leader.commits;
+    return `<tr><td>${esc(a.name)}</td><td><span class="lvb ${st[0]}">${st[1]}</span></td><td>${a.last?ago(a.last)+" sedan":"–"}</td><td><div>${esc(a.branch||"")}</div><div class="note" style="margin:0">${task}</div></td><td style="text-align:right">${a.claims_today}</td><td style="text-align:right">${a.prs_today}</td></tr>`}).join("")}let VIEW="flow",FLOWSEEN=null;
+try{VIEW=localStorage.getItem("tp_view")||"flow"}catch(e){}
+function setView(v){VIEW=v;try{localStorage.setItem("tp_view",v)}catch(e){}
+  document.getElementById("flowview").hidden=v!=="flow";document.getElementById("ov").hidden=v!=="ov";
+  document.querySelectorAll("#vtabs button").forEach(b=>b.classList.toggle("on",b.dataset.v===v));if(v==="ov"&&D)render()}
+document.addEventListener("click",e=>{const b=e.target.closest("#vtabs button");if(b)setView(b.dataset.v)});
+const KIND={commit:"NY COMMIT",pr:"NY PR",merge:"MERGAD"};
+const hms=t=>new Date(t*1000).toLocaleTimeString("sv-SE",{timeZone:"Europe/Stockholm"});
+function renderScore(){const S=AG&&AG.score,el=document.getElementById("score"),wt=document.getElementById("flwait");if(!S){el.innerHTML="";return}
+  el.innerHTML=`<div class="sc"><div class="k">Våra commits i main · plats #${S.rank} (#${S.rank_incl_owner} med ägaren)</div><div class="v">${S.us}</div><div class="s"><span class="up">idag +${S.us_today??"?"}</span></div></div>`+
+   (S.them?`<div class="sc"><div class="k">${esc(S.them)}</div><div class="v">${S.them_n}</div><div class="s">idag +${S.them_today??"?"}</div></div><div class="sc"><div class="k">Avstånd</div><div class="v">${S.gap}</div><div class="s">commits kvar till plats #${Math.max(1,S.rank-1)}</div></div>`:"");
+  wt.textContent=S.open_prs!=null?`${S.open_prs} öppna PR:er väntar på merge (räknas först när de mergas) · siffrorna uppdateras var 5:e minut`:""}function renderFlow(){const sub=document.getElementById("flsub"),w=document.getElementById("flwarn"),ol=document.getElementById("flowlist");
+  if(!AG){sub.textContent="laddar…";return}
+  const age=now()-AG.time;sub.textContent=`Senast uppdaterad för ${age<90?age+" s":ago(AG.time)} sedan · nyast överst`;
+  w.style.display=age>180?"block":"none";w.textContent=age>180?`Ingen ny data på ${ago(AG.time)}. Rapportören på datorn kör troligen inte.`:"";
+  renderScore();const ev=(AG.events||[]).filter(e=>e.kind==="merge").slice(0,100),ids=ev.map(e=>e.id).join(",");if(ids===ol.dataset.ids)return;
+  const old=FLOWSEEN;FLOWSEEN=new Set(ev.map(e=>e.id));ol.dataset.ids=ids;
+  ol.innerHTML=ev.map(e=>{const n=e.kind==="commit"&&e.n>1?` (${e.n} commits)`:e.kind==="merge"&&e.n?` · ${e.n} commits in i main`:"";
+    const fresh=old&&!old.has(e.id)?" fresh":"";
+    return `<li class="${fresh.trim()}" data-id="${esc(e.id)}"><span class="tm">${hms(e.t)}</span><span class="plus">+${e.n||"?"} commits</span><span class="ag">${esc(e.agent)}</span><span class="tt"><a href="${esc(e.url)}" target="_blank" rel="noopener">#${e.pr} ${esc(e.title)}</a></span></li>`}).join("")||'<li><span class="tt">Inga mergar de senaste timmarna än.</span></li>';
+  requestAnimationFrame(()=>setTimeout(()=>ol.querySelectorAll("li.fresh").forEach(li=>li.classList.remove("fresh")),50))}function renderKpis(){const t=P.team,L=P.leader.commits;
   document.getElementById("kpis").innerHTML=[
    ["PR:er öppnade",t.opened,`${t.open} öppna just nu`],["Mergade",t.merged,`in i ${esc(P.repo)}`],
    ["Commits i main",t.commits,`kontot ${esc(D.account)}`],["Plats i topplistan",L.best_rank_ex_owner?"#"+L.best_rank_ex_owner:"–",`av ${L.total}, ägaren ej räknad`]]
@@ -411,7 +441,7 @@ document.getElementById("lbmode").onclick=e=>{const b=e.target.closest("button")
 setInterval(()=>{document.getElementById("clock").textContent=new Date().toLocaleTimeString("sv-SE")},1000);
 setInterval(()=>{if(D){renderMembers();document.getElementById("upd").textContent=status_line()}},30000);
 addEventListener("resize",()=>{if(D){renderChart();renderPRs()}});
-loadData().then(()=>{loadLive();loadAgents()});setInterval(loadData,60000);setInterval(loadLive,150000);setInterval(()=>{if(D)loadAgents()},20000);setInterval(()=>{if(AG)renderAgents()},5000);
+loadData().then(()=>{loadLive();loadAgents()});setInterval(loadData,60000);setInterval(()=>{if(VIEW==="ov")loadLive()},150000);setInterval(()=>{if(D)loadAgents()},20000);setInterval(()=>{if(AG){renderAgents();renderFlow()}},5000);setView(VIEW);
 </script>
 </body>
 </html>
