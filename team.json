@@ -7,6 +7,7 @@
     {"name": "Claude", "prefixes": ["claude/"], "default": true},
     {"name": "Codex", "prefixes": ["codex/"]},
     {"name": "Antigravity", "prefixes": ["ag/"]},
+    {"name": "DeepSeek", "prefixes": ["deepseek/"]},
     {"name": "Vonsek2"},
     {"name": "Vonsek3"},
     {"name": "Vonsek4"}
