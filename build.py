@@ -105,6 +105,67 @@ OURS_Q = """query($q:String!,$after:String){search(query:$q,type:ISSUE,first:100
     files(first:20){nodes{path}}}}}}"""
 
 
+RATE_Q = """query($q:String!,$after:String){search(query:$q,type:ISSUE,first:100,after:$after){
+  pageInfo{hasNextPage endCursor}
+  nodes{... on PullRequest{number mergedAt headRefName commits{totalCount}}}}}"""
+
+
+def merged_commits(repo, login, since):
+    """Merged PRs by `login` since `since` (epoch): (merge time, commits in the PR, branch)."""
+    q = f"repo:{repo} is:pr is:merged author:{login} merged:>{datetime.fromtimestamp(since, timezone.utc):%Y-%m-%dT%H:%M:%SZ}"
+    out, after = [], None
+    for _ in range(10):
+        d = graphql(RATE_Q, {"q": q, "after": after})["search"]
+        out += [(ts(n["mergedAt"]), n["commits"]["totalCount"], n.get("headRefName", ""))
+                for n in d["nodes"] if n and n.get("mergedAt")]
+        if not d["pageInfo"]["hasNextPage"]:
+            break
+        after = d["pageInfo"]["endCursor"]
+    return out
+
+
+def commit_rate(repo, account, leader, members):
+    """What the contributor list counts: commits that reached main through merged PRs, per hour.
+
+    Counts by merge time (when the commits landed on main), for our account and the account just above us.
+    """
+    now = time.time()
+    rows = leader["commits"]
+    us = next((r for r in rows["top"] if r["login"].lower() == account.lower()), None)
+    nxt = rows.get("next")
+    logins = [account] + ([nxt["login"]] if nxt else [])
+    acc = {}
+    for login in logins:
+        prs = merged_commits(repo, login, now - 86400)
+        win = {h: sum(c for t, c, _ in prs if t > now - h * 3600) for h in (1, 6, 24)}
+        merged24 = len(prs)
+        acc[login] = {
+            "login": login,
+            "commits_1h": win[1], "commits_6h": win[6], "commits_24h": win[24],
+            "per_hour_6h": round(win[6] / 6, 1), "per_hour_24h": round(win[24] / 24, 1),
+            "merged_prs_24h": merged24, "commits_per_pr_24h": round(win[24] / merged24, 2) if merged24 else 0,
+            "hourly": [sum(c for t, c, _ in prs if now - (i + 1) * 3600 < t <= now - i * 3600) for i in range(23, -1, -1)],
+        }
+        if login == account:
+            per = {}
+            for t, c, ref in prs:
+                per[member_for(ref, members)] = per.get(member_for(ref, members), 0) + c
+            acc[login]["by_member_24h"] = per
+    mine = acc[account]
+    eta = None
+    if nxt:
+        them = acc[nxt["login"]]
+        for key in ("per_hour_6h", "per_hour_24h"):
+            gain = mine[key] - them[key]
+            eta_h = round(nxt["gap"] / gain, 1) if gain > 0 else None
+            eta = eta or {}
+            eta[key] = eta_h
+    return {"built": int(now), "account": account, "rank": rows.get("best_rank_ex_owner"),
+            "rank_incl_owner": (us or {}).get("rank"), "commits": (us or {}).get("n", 0),
+            "top5": [{"login": r["login"], "n": r["n"], "owner": r.get("owner", False)} for r in rows["top"][:5]],
+            "next": nxt, "us": mine, "them": acc.get(nxt["login"]) if nxt else None, "eta_hours": eta}
+
+
 def our_prs(repo, account):
     """All PRs by the account in the repo, with branch names, via one or a few GraphQL searches."""
     out, after = [], None
@@ -332,6 +393,14 @@ def build_project(p, cfg, prev=None):
             if pr.get("merged_at"):
                 a["n"] += 1
         leader = {"commits": rank(commit_rows, owner, [account]), "prs": rank(list(by_author.values()), owner, [account])}
+    if prev and prev.get("rate"):
+        rate = prev["rate"]
+    else:
+        try:
+            rate = commit_rate(repo, account, leader, members)
+        except Exception as e:  # the panel must still build without it
+            print("commit_rate:", e, file=sys.stderr)
+            rate = None
     ours = our_prs(repo, account)
     board, board_issue = board_status(repo, account) if p.get("board") else ({}, None)
 
@@ -377,7 +446,7 @@ def build_project(p, cfg, prev=None):
                                  boot_milestones(repo, meta["default_branch"]) if p["milestones"] == "status_table" else None),
         "people": people, "pushes": pushes[:200],
         "team": {"commits": account_commits, **{k: sum(x[k] for x in people) for k in ("opened", "merged", "open", "closed")}},
-        "leader": leader, "leader_built": prev.get("leader_built", int(now)) if prev else int(now),
+        "leader": leader, "rate": rate, "leader_built": prev.get("leader_built", int(now)) if prev else int(now),
         "feed": feed[:40],
         # compact list of our PRs so the browser can recompute stats with live data
         "ours": [pr_row(pr, state(pr), board.get(pr["number"], {}), account) for pr in ours],

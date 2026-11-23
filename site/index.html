@@ -52,7 +52,7 @@ header{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;
 .step.big{grid-column:1/-1}
 .step .w{margin-left:auto;font:400 12px var(--mono);color:var(--ink3);flex:none}
 .note{font-size:13px;color:var(--ink3);margin-top:18px;line-height:1.6}
-.kpis{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.kpis{display:grid;grid-template-columns:1fr 1fr;gap:20px}.cr4{grid-template-columns:repeat(4,1fr);margin:6px 0 20px}.crgrid{display:grid;grid-template-columns:1.6fr 1fr;gap:28px}@media(max-width:900px){.cr4{grid-template-columns:1fr 1fr}.crgrid{grid-template-columns:1fr}}.crrow{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--line);font-size:14px}.crrow.me{font-weight:600}
 .kpi{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:24px;display:flex;flex-direction:column;justify-content:space-between;min-height:128px}
 .kpi .k{font:500 13px var(--sans);color:var(--ink3)}
 .kpi .v{font:600 44px/1.05 var(--serif);letter-spacing:-.01em;color:var(--strong);margin:10px 0 4px}
@@ -168,6 +168,15 @@ header{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;
     <div class="kpis" id="kpis"></div>
   </section>
 
+  <section class="panel" id="crsec" style="margin-bottom:20px">
+    <div class="ptitle">Contributor-ranking <small id="crsub"></small></div>
+    <div class="kpis cr4" id="crk"></div>
+    <div class="crgrid">
+      <div><div class="h4">Commits in i main per timme, 24 h (merge-tid)</div><div class="legend" id="crleg"></div><div id="crchart"></div></div>
+      <div><div class="h4">Topp 5 i contributor-listan</div><div class="lb" id="crtop"></div><div class="h4" style="margin-top:16px">Våra commits per agent, 24 h</div><div class="lb" id="crper"></div></div>
+    </div>
+    <div class="note" id="crnote"></div>
+  </section>
   <section class="panel" id="prsec" style="margin-bottom:20px">
     <div class="ptitle">Mina pull requests <small id="prsub"></small></div>
     <div class="prk" id="prk"></div>
@@ -231,7 +240,25 @@ function renderMission(){const m=P.milestones,C=2*Math.PI*96;
   document.getElementById("pct").textContent=m.percent+"%";document.getElementById("msub").textContent=`${m.done} av ${m.total} klara`;
   document.getElementById("goal").textContent=m.goal;
   document.getElementById("steps").innerHTML=m.items.map(i=>`<div class="step ${i.state} ${i.weight>1?"big":""}"><b>${i.state==="done"?"✓":i.state==="partial"?"◐":""}</b><span title="${esc(i.name)}">${esc(i.name)}</span>${i.weight>1?`<span class="w">${i.weight} p</span>`:""}</div>`).join("")}
-function renderKpis(){const t=P.team,L=P.leader.commits;
+function renderRanking(){const R=P.rate,el=document.getElementById("crsec");if(!R||!R.us){el.style.display="none";return}el.style.display="";
+  const us=R.us,th=R.them,nx=R.next,eta=R.eta_hours||{};
+  const fmtEta=h=>h==null?"–":h<48?`${h} h`:`${(h/24).toFixed(1)} dygn`;
+  document.getElementById("crsub").textContent=`räknas om var 15:e minut · ${since(R.built)}`;
+  document.getElementById("crk").innerHTML=[
+   ["Plats",R.rank?"#"+R.rank:"–",`#${R.rank_incl_owner||"–"} med ägaren`],
+   ["Commits i main",R.commits,`${us.commits_24h} senaste 24 h, ${us.commits_1h} senaste timmen`],
+   ["Avstånd",nx?nx.gap:"–",nx?`till ${esc(nx.login)}`:"ingen före oss"],
+   ["Ikapp (24 h-takt)",nx?fmtEta(eta.per_hour_24h):"–",nx?`${eta.per_hour_24h==null?"de växer snabbare · ":""}vi ${us.per_hour_24h}/h, de ${th?th.per_hour_24h:0}/h · 6 h-takt: ${eta.per_hour_6h==null?"–":fmtEta(eta.per_hour_6h)}`:""]]
+   .map(([k,v,s])=>`<div class="kpi"><div class="k">${k}</div><div class="v">${v}</div><div class="s">${s}</div></div>`).join("");
+  const el2=document.getElementById("crchart"),W=el2.clientWidth||500,H=170,pl=28,pb=20,n=24,a=us.hourly,b=th?th.hourly:[],max=Math.max(1,...a,...b),bw=(W-pl)/n;
+  let s=`<svg width="100%" viewBox="0 0 ${W} ${H}">`;for(let i=0;i<n;i++){const x=pl+i*bw,ha=(a[i]||0)/max*(H-pb-6),hb=(b[i]||0)/max*(H-pb-6);
+   s+=`<rect x="${x+1}" y="${H-pb-hb}" width="${bw/2-1}" height="${hb}" fill="#C9C7C0"><title>${esc(th?th.login:"")}: ${b[i]||0}</title></rect><rect x="${x+bw/2}" y="${H-pb-ha}" width="${bw/2-1}" height="${ha}" fill="#1F6C9F"><title>vi: ${a[i]||0}</title></rect>`}
+  s+=`<text x="${pl}" y="${H-4}" font-size="11" fill="#8A8986">-24 h</text><text x="${W-4}" y="${H-4}" font-size="11" fill="#8A8986" text-anchor="end">nu</text><text x="2" y="12" font-size="11" fill="#8A8986">${max}</text></svg>`;el2.innerHTML=s;
+  document.getElementById("crleg").innerHTML=`<span><i style="background:#1F6C9F"></i>vi</span>`+(th?`<span><i style="background:#C9C7C0"></i>${esc(th.login)}</span>`:"");
+  document.getElementById("crtop").innerHTML=R.top5.map((r,i)=>`<div class="crrow${r.login.toLowerCase()===R.account.toLowerCase()?" me":""}"><span>${i+1}. ${esc(r.login)}${r.owner?" (ägare)":""}</span><span>${r.n}</span></div>`).join("");
+  const per=Object.entries(us.by_member_24h||{}).sort((x,y)=>y[1]-x[1]);
+  document.getElementById("crper").innerHTML=per.length?per.map(([k,v])=>`<div class="crrow"><span>${esc(k)}</span><span>${v}</span></div>`).join(""):'<div class="note">Inga mergade commits senaste 24 h.</div>';
+  document.getElementById("crnote").textContent=`Listan räknar commits på main. Vi: ${us.merged_prs_24h} mergade PR:er senaste 24 h, ${us.commits_per_pr_24h} commits per PR.`+(th?` ${th.login}: ${th.merged_prs_24h} PR:er, ${th.commits_per_pr_24h} commits per PR.`:"")+` Maintainern mergar i klumpar, så timtakten hoppar.`}function renderKpis(){const t=P.team,L=P.leader.commits;
   document.getElementById("kpis").innerHTML=[
    ["PR:er öppnade",t.opened,`${t.open} öppna just nu`],["Mergade",t.merged,`in i ${esc(P.repo)}`],
    ["Commits i main",t.commits,`kontot ${esc(D.account)}`],["Plats i topplistan",L.best_rank_ex_owner?"#"+L.best_rank_ex_owner:"–",`av ${L.total}, ägaren ej räknad`]]
@@ -337,7 +364,7 @@ function recompute(p){if(!p.ours)return;const byN=new Map(p.ours.map(x=>[x.n,x])
     if(x.m&&t-x.m<7*86400)p.feed.push({time:x.m,who,kind:"merge",text:x.t,meta:`PR #${x.n} mergad`,url:x.u})}}
 const since=t=>now()-t<60?"nyss":`för ${ago(t)} sedan`;
 function status_line(){return `Data uppdaterad ${since(D.built)} · topplistan ${since(D.projects[0].leader_built||D.built)}${liveErr?" · "+liveErr:""}`}
-function render(){if(!D)return;pick();recompute(P);renderTabs();renderMission();renderKpis();renderPRs();renderMembers();renderChart();renderBoard();renderFeed();
+function render(){if(!D)return;pick();recompute(P);renderTabs();renderMission();renderKpis();renderRanking();renderPRs();renderMembers();renderChart();renderBoard();renderFeed();
   document.getElementById("upd").textContent=status_line()}
 async function getJSON(u){try{const r=await fetch(u+(u.includes("?")?"&":"?")+"t="+Date.now(),{cache:"no-store"});return r.ok?await r.json():null}catch(e){return null}}
 async function loadData(){
