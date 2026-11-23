@@ -1,6 +1,6 @@
 {
   "title": "Team Vonsek",
-  "account": "Vonsek",
+  "account": "evilclanker9000",
   "quiet_minutes": 60,
   "stopped_minutes": 180,
   "members": [
@@ -14,7 +14,7 @@
   ],
   "ignore": ["claude", "github-actions", "dependabot", "copilot"],
   "projects": [
-    {"id": "leonida", "name": "Leonida", "repo": "ItsNotRexed/Leonida", "fork": "Vonsek/Leonida", "milestones": "status_table", "board": true},
-    {"id": "x2w", "name": "Xbox2Windows", "repo": "R0Y00/Xbox2Windows", "fork": "Vonsek/Xbox2Windows", "milestones": "x2w"}
+    {"id": "leonida", "name": "Leonida", "repo": "ItsNotRexed/Leonida", "fork": "evilclanker9000/Leonida", "milestones": "status_table", "board": true},
+    {"id": "x2w", "name": "Xbox2Windows", "repo": "R0Y00/Xbox2Windows", "fork": "evilclanker9000/Xbox2Windows", "milestones": "x2w"}
   ]
 }

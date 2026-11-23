@@ -341,7 +341,7 @@ function render(){if(!D)return;pick();recompute(P);renderTabs();renderMission();
   document.getElementById("upd").textContent=status_line()}
 async function getJSON(u){try{const r=await fetch(u+(u.includes("?")?"&":"?")+"t="+Date.now(),{cache:"no-store"});return r.ok?await r.json():null}catch(e){return null}}
 async function loadData(){
-  const [pages,live]=await Promise.all([getJSON("data.json"),getJSON("https://raw.githubusercontent.com/Vonsek/teampanel/live/data.json")]);
+  const [pages,live]=await Promise.all([getJSON("data.json"),getJSON("https://raw.githubusercontent.com/evilclanker9000/teampanel/live/data.json")]);
   const best=[pages,live].filter(x=>x&&x.projects).sort((a,b)=>b.built-a.built)[0];
   if(!best){document.getElementById("err").textContent="Kunde inte läsa data";return}
   D=best;LOCAL=(live&&live.local)||D.local||LOCAL;document.getElementById("err").textContent="";render()}

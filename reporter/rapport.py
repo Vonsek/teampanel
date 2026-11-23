@@ -1,7 +1,7 @@
 """Publishes fresh team data and the local Claude Code terminals' progress to the team site.
 
 Runs on Lucas's PC every 2 minutes: rebuilds data.json (our PRs, pushes, progress;
-leaderboard every 15 min) and uploads it to the `live` branch of Vonsek/teampanel. Only publishes: member id, whether the
+leaderboard every 15 min) and uploads it to the `live` branch of evilclanker9000/teampanel. Only publishes: member id, whether the
 terminal is running, last activity time, branch, number of changed files,
 last commit subject/time and the claimed task. No paths, logs or prompts.
 
@@ -21,7 +21,7 @@ from datetime import datetime
 TEAM = r"Z:\Claude\team"
 KONTON = r"Z:\Claude\konton"
 MEMBERS = ["vonsek2", "vonsek3", "vonsek4"]
-REPO = "Vonsek/teampanel"
+REPO = "evilclanker9000/teampanel"
 BRANCH = "live"
 PATH = "data.json"
 FULL_EVERY = 15 * 60
