@@ -52,7 +52,7 @@ header{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;
 .step.big{grid-column:1/-1}
 .step .w{margin-left:auto;font:400 12px var(--mono);color:var(--ink3);flex:none}
 .note{font-size:13px;color:var(--ink3);margin-top:18px;line-height:1.6}
-.kpis{display:grid;grid-template-columns:1fr 1fr;gap:20px}.cr4{grid-template-columns:repeat(4,1fr);margin:6px 0 20px}.crgrid{display:grid;grid-template-columns:1.6fr 1fr;gap:28px}@media(max-width:900px){.cr4{grid-template-columns:1fr 1fr}.crgrid{grid-template-columns:1fr}}.crrow{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--line);font-size:14px}.crrow.me{font-weight:600}
+.kpis{display:grid;grid-template-columns:1fr 1fr;gap:20px}.lvwarn{display:none;margin:0 0 12px;padding:10px 14px;border-radius:8px;background:#FBEAEA;color:#8A1C1C;font-size:14px}.lvb{display:inline-block;padding:2px 8px;border-radius:999px;font-size:12px;font-weight:600}.lvb.ok{background:#E3F1E6;color:#1E6B34}.lvb.quiet{background:#FFF4D6;color:#7A5A00}.lvb.off{background:#EEE;color:#666}.cr4{grid-template-columns:repeat(4,1fr);margin:6px 0 20px}.crgrid{display:grid;grid-template-columns:1.6fr 1fr;gap:28px}@media(max-width:900px){.cr4{grid-template-columns:1fr 1fr}.crgrid{grid-template-columns:1fr}}.crrow{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--line);font-size:14px}.crrow.me{font-weight:600}
 .kpi{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:24px;display:flex;flex-direction:column;justify-content:space-between;min-height:128px}
 .kpi .k{font:500 13px var(--sans);color:var(--ink3)}
 .kpi .v{font:600 44px/1.05 var(--serif);letter-spacing:-.01em;color:var(--strong);margin:10px 0 4px}
@@ -177,6 +177,12 @@ header{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;
     </div>
     <div class="note" id="crnote"></div>
   </section>
+  <section class="panel" id="lvsec" style="margin-bottom:20px">
+    <div class="ptitle">Live: agenterna <small id="lvsub">laddar…</small></div>
+    <div class="lvwarn" id="lvwarn"></div>
+    <div class="tblwrap"><table class="tbl"><thead><tr><th>Agent</th><th>Läge</th><th>Senast aktiv</th><th>Gren / uppgift</th><th style="text-align:right">Anspråk idag</th><th style="text-align:right">PR idag</th></tr></thead><tbody id="lvbody"></tbody></table></div>
+    <div class="note">Från datorn var 30:e sekund (läses av sidan var 20:e sekund, publiceras högst var 75:e). "Senast aktiv" är senaste ändringen i någon av agentens worktrees eller senaste anspråk.</div>
+  </section>
   <section class="panel" id="prsec" style="margin-bottom:20px">
     <div class="ptitle">Mina pull requests <small id="prsub"></small></div>
     <div class="prk" id="prk"></div>
@@ -258,7 +264,23 @@ function renderRanking(){const R=P.rate,el=document.getElementById("crsec");if(!
   document.getElementById("crtop").innerHTML=R.top5.map((r,i)=>`<div class="crrow${r.login.toLowerCase()===R.account.toLowerCase()?" me":""}"><span>${i+1}. ${esc(r.login)}${r.owner?" (ägare)":""}</span><span>${r.n}</span></div>`).join("");
   const per=Object.entries(us.by_member_24h||{}).sort((x,y)=>y[1]-x[1]);
   document.getElementById("crper").innerHTML=per.length?per.map(([k,v])=>`<div class="crrow"><span>${esc(k)}</span><span>${v}</span></div>`).join(""):'<div class="note">Inga mergade commits senaste 24 h.</div>';
-  document.getElementById("crnote").textContent=`Listan räknar commits på main. Vi: ${us.merged_prs_24h} mergade PR:er senaste 24 h, ${us.commits_per_pr_24h} commits per PR.`+(th?` ${th.login}: ${th.merged_prs_24h} PR:er, ${th.commits_per_pr_24h} commits per PR.`:"")+` Maintainern mergar i klumpar, så timtakten hoppar.`}function renderKpis(){const t=P.team,L=P.leader.commits;
+  document.getElementById("crnote").textContent=`Listan räknar commits på main. Vi: ${us.merged_prs_24h} mergade PR:er senaste 24 h, ${us.commits_per_pr_24h} commits per PR.`+(th?` ${th.login}: ${th.merged_prs_24h} PR:er, ${th.commits_per_pr_24h} commits per PR.`:"")+` Maintainern mergar i klumpar, så timtakten hoppar.`}let AG=null,agTag=null,agFetched=0;
+async function loadAgents(){const api="https://api.github.com/repos/"+D.account+"/teampanel/contents/agents.json?ref=live";
+  try{const h={"Accept":"application/vnd.github.raw+json"};if(agTag)h["If-None-Match"]=agTag;
+    let r=await fetch(api,{headers:h,cache:"no-store"});
+    if(r.status===304){agFetched=now();renderAgents();return}
+    if(!r.ok)r=await fetch(`https://raw.githubusercontent.com/${D.account}/teampanel/live/agents.json?t=${Date.now()}`,{cache:"no-store"});
+    else agTag=r.headers.get("ETag");
+    if(r.ok){const j=await r.json();if(!AG||j.time!==AG.time){AG=j}agFetched=now()}}catch(e){}
+  renderAgents()}
+function renderAgents(){const sub=document.getElementById("lvsub"),w=document.getElementById("lvwarn");if(!AG){sub.textContent="ingen data än";return}
+  const age=now()-AG.time;sub.textContent=`senast uppdaterad för ${age<90?age+" s":ago(AG.time)} sedan`;
+  w.style.display=age>180?"block":"none";w.textContent=age>180?`Ingen ny status på ${ago(AG.time)}. Rapportören på datorn kör troligen inte, eller datorn sover.`:"";
+  const rows=AG.agents.slice().sort((a,b)=>b.last-a.last);
+  document.getElementById("lvbody").innerHTML=rows.map(a=>{const m=(now()-a.last)/60;
+    const st=a.running===false?["off","STOPPAD"]:m<15?["ok","AKTIV"]:m<60?["quiet","TYST"]:a.running?["quiet","KÖR, TYST"]:["off","INAKTIV"];
+    const task=a.task?`${esc(a.task.id)}${a.task.pr?` · <a href="https://github.com/ItsNotRexed/Leonida/pull/${a.task.pr}" target="_blank">#${a.task.pr}</a>`:""}`:"";
+    return `<tr><td>${esc(a.name)}</td><td><span class="lvb ${st[0]}">${st[1]}</span></td><td>${a.last?ago(a.last)+" sedan":"–"}</td><td><div>${esc(a.branch||"")}</div><div class="note" style="margin:0">${task}</div></td><td style="text-align:right">${a.claims_today}</td><td style="text-align:right">${a.prs_today}</td></tr>`}).join("")}function renderKpis(){const t=P.team,L=P.leader.commits;
   document.getElementById("kpis").innerHTML=[
    ["PR:er öppnade",t.opened,`${t.open} öppna just nu`],["Mergade",t.merged,`in i ${esc(P.repo)}`],
    ["Commits i main",t.commits,`kontot ${esc(D.account)}`],["Plats i topplistan",L.best_rank_ex_owner?"#"+L.best_rank_ex_owner:"–",`av ${L.total}, ägaren ej räknad`]]
@@ -389,7 +411,7 @@ document.getElementById("lbmode").onclick=e=>{const b=e.target.closest("button")
 setInterval(()=>{document.getElementById("clock").textContent=new Date().toLocaleTimeString("sv-SE")},1000);
 setInterval(()=>{if(D){renderMembers();document.getElementById("upd").textContent=status_line()}},30000);
 addEventListener("resize",()=>{if(D){renderChart();renderPRs()}});
-loadData().then(()=>{loadLive()});setInterval(loadData,60000);setInterval(loadLive,150000);
+loadData().then(()=>{loadLive();loadAgents()});setInterval(loadData,60000);setInterval(loadLive,150000);setInterval(()=>{if(D)loadAgents()},20000);setInterval(()=>{if(AG)renderAgents()},5000);
 </script>
 </body>
 </html>

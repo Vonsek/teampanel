@@ -107,15 +107,15 @@ def member_status(mid):
     }
 
 
-def upload(data):
+def upload(data, path=PATH):
     body = json.dumps(data, ensure_ascii=False, separators=(",", ":"))
-    code, out = run(["gh", "api", f"repos/{REPO}/contents/{PATH}?ref={BRANCH}", "--jq", ".sha"])
+    code, out = run(["gh", "api", f"repos/{REPO}/contents/{path}?ref={BRANCH}", "--jq", ".sha"])
     sha = out if code == 0 else ""
     payload = {"message": "Update live status", "branch": BRANCH,
                "content": base64.b64encode(body.encode("utf-8")).decode("ascii")}
     if sha:
         payload["sha"] = sha
-    code, out = run(["gh", "api", "-X", "PUT", f"repos/{REPO}/contents/{PATH}", "--input", "-"],
+    code, out = run(["gh", "api", "-X", "PUT", f"repos/{REPO}/contents/{path}", "--input", "-"],
                     inp=json.dumps(payload))
     return code == 0, out[:200]
 
@@ -148,18 +148,58 @@ def once():
     print(f"{stamp} {'skickat' if ok else 'FEL: ' + info} ({summary})", flush=True)
 
 
+LIVE_TICK = 30        # agents.json is collected this often (local reads only)
+LIVE_MIN_GAP = 75     # and uploaded at most this often: the page's unauthenticated API polls stay under 60/h
+LIVE_HEARTBEAT = 180  # uploaded at least this often, so the page can tell the reporter is alive
+_live = {"sig": None, "sent": 0}
+
+
+def live_once():
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    import agents
+    importlib.reload(agents)
+    data = agents.collect(lambda mid: member_status(mid)["terminal"])
+    sig = json.dumps(data["agents"], sort_keys=True)
+    now = time.time()
+    if now - _live["sent"] < LIVE_MIN_GAP:
+        return
+    if sig == _live["sig"] and now - _live["sent"] < LIVE_HEARTBEAT:
+        return
+    ok, info = upload(data, "agents.json")
+    if ok:
+        _live.update(sig=sig, sent=now)
+    else:
+        print(f"{datetime.now():%H:%M:%S} agents.json FEL: {info}", flush=True)
+
+
 def main():
     ensure_branch()
     if "--once" in sys.argv:
+        live_once()
         once()
         return
-    print("Rapporterar terminalernas status till teamsidan var 2:a minut. Ctrl+C stänger.", flush=True)
-    while True:
+    print("Rapporterar agenternas status var 30:e sekund (agents.json) och teamdata var 2:a minut. "
+          "Ctrl+C stänger.", flush=True)
+    import threading
+
+    def full():
         try:
             once()
         except Exception as e:
             print("fel:", e, flush=True)
-        time.sleep(INTERVAL)
+
+    worker, next_full = None, 0
+    while True:
+        try:
+            live_once()
+        except Exception as e:
+            print("fel (live):", e, flush=True)
+        # The full build can take minutes (leaderboard); it runs beside the 30-second live loop.
+        if time.time() >= next_full and not (worker and worker.is_alive()):
+            next_full = time.time() + INTERVAL
+            worker = threading.Thread(target=full, daemon=True)
+            worker.start()
+        time.sleep(LIVE_TICK)
 
 
 if __name__ == "__main__":
